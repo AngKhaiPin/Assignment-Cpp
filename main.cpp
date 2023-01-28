@@ -51,6 +51,7 @@ void ChangeZombieSettings()
     std::cout << "\nZombie Settings\n";
     std::cout << "-----------------\n";
     std::cout << "Enter number of zombies: ";
+    
     std::cin >> Zombie.ZombieCount;
     if (Zombie.ZombieCount >= 10)
     {
