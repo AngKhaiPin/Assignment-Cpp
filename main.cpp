@@ -109,7 +109,7 @@ void ShowGameSettings()
     GameSettings();
 }
 
-void MakeBoard()
+void makeBoard()
 {
     map.init(Rows, Columns);
     Alien.InitialLanding(map, Rows, Columns);
@@ -157,7 +157,7 @@ void PlayerMovement()
 int main()
 {
     ShowGameSettings();
-    MakeBoard();
+    makeBoard();
     ShowAlienHUD();
     ShowZombieHUD();
     PlayerMovement();
