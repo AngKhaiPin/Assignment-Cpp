@@ -123,8 +123,8 @@ void Player::InitialLanding(Map &map_, float x, float y)
 
 void rockItem(Map &map_, int x, int y)
 {
-    char rockItems[] = {'h', 'p', '^', 'v', '<', '>', 'r', ' '};
-    int noOfItems = 8;
+    char rockItems[] = {'h', 'p', '^', 'v', '<', '>', ' '};
+    int noOfItems = 7;
     int itemsNo = rand() % noOfItems;
     char replacedItem = rockItems[itemsNo];
     map_.setObject(x, y, replacedItem);
@@ -133,18 +133,21 @@ void rockItem(Map &map_, int x, int y)
 
 void healthEffect(int AlienHp, int MaxAlienHp)
 {
-    std::cout << "Your Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
-    AlienHp = AlienHp + 20;
-    if (AlienHp > MaxAlienHp)
+    if (AlienHp < MaxAlienHp)
     {
-        AlienHp = 100;
+        std::cout << "Your Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
+        AlienHp = AlienHp + 20;
+    }
+    else
+    {
+        std::cout << "Your Alien is still healthy. There's no need for recover." << std::endl;
     }
 }
 
-// void RockEffect()
-// {
-
-// }
+void podEffect() //after implement zombies, needs to put in zombies
+{
+    std::cout << "Your Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
+}
 
 void Player::upPos(Map &map_)
 {
@@ -152,6 +155,7 @@ void Player::upPos(Map &map_)
     prevY = posY;
     posX = posX;
     posY = posY - 1;
+    AlienAtk += 20;
     map_.setObject(prevX, prevY, '.');
     map_.setObject(posX, posY, 'A');
 }
@@ -162,6 +166,7 @@ void Player::downPos(Map &map_)
     prevY = posY;
     posX = posX;
     posY = posY + 1;
+    AlienAtk += 20;
     map_.setObject(prevX, prevY, '.');
     map_.setObject(posX, posY, 'A');
 }
@@ -172,6 +177,7 @@ void Player::leftPos(Map &map_)
     prevY = posY;
     posX = posX - 1;
     posY = posY;
+    AlienAtk += 20;
     map_.setObject(prevX, prevY, '.');
     map_.setObject(posX, posY, 'A');
 }
@@ -182,6 +188,7 @@ void Player::rightPos(Map &map_)
     prevY = posY;
     posX = posX + 1;
     posY = posY;
+    AlienAtk += 20;
     map_.setObject(prevX, prevY, '.');
     map_.setObject(posX, posY, 'A');
 }
@@ -206,6 +213,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
+                case 'p':
+                    podEffect();
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
                 case 'h':
                     healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
@@ -304,6 +318,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }                
                 switch (objectOnTop)
                 {
+                case 'p':
+                    podEffect();
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
                 case 'h':
                     healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
@@ -402,6 +423,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }                
                 switch (objectOnTop)
                 {
+                case 'p':
+                    podEffect();
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
                 case 'h':
                     healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
@@ -499,6 +527,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }                           
                 switch (objectOnTop)
                 {
+                case 'p':
+                    podEffect();
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
                 case 'h':
                     healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
@@ -599,7 +634,7 @@ void Enemy::ZombieCreation()
         ZombHpVec.push_back(ZombieHp);
         ZombAtkVec.push_back(ZombieAtk);
         ZombRngVec.push_back(ZombieRange);
-        std::cout << '\n' << "  Zombie " << i + 1 << " : Life " << ZombieHp << ", Attack  " << ZombieAtk << ", Range " << ZombieRange;
+        std::cout << '\n' << "  Zombie " << i + 1 << " : Health " << ZombieHp << ", Attack  " << ZombieAtk << ", Range " << ZombieRange;
     }
 }
 

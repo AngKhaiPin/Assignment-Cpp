@@ -7,13 +7,13 @@
 // Emails: 1211101248@student.mmu.edu.my | 1221302721@student.mmu.edu.my |
 // Phones: 011-57725120 | 012-9156393 |
 // *********************************************************
-// g++ pf\*.cpp main.cpp -o main
 
 #include "pf/header.h"
 #include <algorithm>
 
 char GSchoice;
-int Rows = 5, Columns = 9;
+bool GameOver = false;
+int Rows = 9, Columns = 9;
 
 std::vector<std::vector<char>> board; // Make the board a sort of matrix
 
@@ -24,7 +24,6 @@ Map map;
 template <typename T> // Overloading Operator "<<" to let std::cout print out vector. (MUST NOT TOUCH)
 std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
 {
-
     for (size_t i = v.size() - 1; i < v.size(); i++)
     {
         os << v[i];
@@ -108,7 +107,7 @@ void ShowGameSettings()
     GameSettings();
 }
 
-void MakeBoard()
+void makeBoard()
 {
     // Initialize the gameboard with random objects and alien in middle position
     map.init(Rows, Columns);
@@ -119,7 +118,7 @@ void MakeBoard()
 
 void ShowAlienHUD()
 {
-    std::cout << "\n->Alien    : Life " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
+    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
 }
 
 void ShowZombieHUD()
@@ -130,7 +129,7 @@ void ShowZombieHUD()
 void PlayerMovement()
 {
     std::cout << std::endl;
-    std::cout << "Command => ";
+    std::cout << "\n<Command> => ";
     std::string userInput;
     std::cin >> userInput;
     do
@@ -157,10 +156,11 @@ int main()
     srand(1);
     ShowGameSettings();
     pf::ClearScreen();
-    MakeBoard();
+    makeBoard();
     ShowAlienHUD();
     ShowZombieHUD();
-    PlayerMovement();
-
-    PlayerMovement();
+    while(!GameOver)
+    {
+        PlayerMovement();
+    }
 }
