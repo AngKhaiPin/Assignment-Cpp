@@ -154,10 +154,13 @@ void PlayerMovement()
 
 int main()
 {
+    srand(1);
     ShowGameSettings();
+    pf::ClearScreen();
     MakeBoard();
     ShowAlienHUD();
     ShowZombieHUD();
     PlayerMovement();
+
     PlayerMovement();
 }
