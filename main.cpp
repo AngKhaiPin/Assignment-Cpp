@@ -7,16 +7,15 @@
 // Emails: 1211101248@student.mmu.edu.my | 1221302721@student.mmu.edu.my |
 // Phones: 011-57725120 | 012-9156393 |
 // *********************************************************
+// g++ pf\*.cpp main.cpp -o main
 
 #include "pf/header.h"
 #include <algorithm>
 
 char GSchoice;
-int Rows = 3, Columns = 6;
+int Rows = 5, Columns = 9;
 
 std::vector<std::vector<char>> board; // Make the board a sort of matrix
-int kColumns = (Columns * 2) + 1;
-int XCount = 1;
 
 Player Alien;
 Enemy Zombie;
@@ -62,7 +61,7 @@ void ChangeZombieSettings()
     else
     {
         std::cout << "\nSettings Updated.\n";
-        Pause();
+        Pause(); 
     }
 }
 
@@ -111,12 +110,11 @@ void ShowGameSettings()
 
 void MakeBoard()
 {
+    // Initialize the gameboard with random objects and alien in middle position
     map.init(Rows, Columns);
     Alien.InitialLanding(map, Rows, Columns);
-    // pf::ClearScreen();
+    pf::ClearScreen();
     map.display();
-    Alien.newPosX_ = Alien.posX_;
-    Alien.newPosY_ = Alien.posY_;
 }
 
 void ShowAlienHUD()

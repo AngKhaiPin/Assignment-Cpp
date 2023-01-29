@@ -3,13 +3,11 @@
 #include <iostream>
 #include <ctime>
 
-// g++ pf\*.cpp main.cpp -o main
-
 void Map::init(int rows, int columns)
 {
     rows_ = rows;
     columns_ = columns;
-    char randobjects[] = {' ', ' ', ' ', ' ', ' ', ' ', 'h', 'v', '^', '<', '>', 'p'};
+    char randobjects[] = {' ', ' ', ' ', ' ', ' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
     int noOfObjects = 12; // number of objects in the objects array
     // create dynamic 2D array using vector
     map_.resize(columns_); // create empty rows
@@ -117,400 +115,475 @@ void Player::InitialLanding(Map &map_, float x, float y)
     middleY = ceil(y / 2);
     posX_ = middleX;
     posY_ = middleY;
+    posX = posX_;
+    posY = posY_;
 
     map_.setObject(middleX, middleY, AlienSymbol);
 }
 
+void rockItem(Map &map_, int x, int y)
+{
+    char rockItems[] = {'h', 'p', '^', 'v', '<', '>', 'r', ' '};
+    int noOfItems = 8;
+    int itemsNo = rand() % noOfItems;
+    char replacedItem = rockItems[itemsNo];
+    map_.setObject(x, y, replacedItem);
+    std::cout << replacedItem;
+}
+
+void healthEffect(int AlienHp, int MaxAlienHp)
+{
+    std::cout << "Your Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
+    AlienHp = AlienHp + 20;
+    if (AlienHp > MaxAlienHp)
+    {
+        AlienHp = 100;
+    }
+}
+
+// void RockEffect()
+// {
+
+// }
+
+void Player::upPos(Map &map_)
+{
+    prevX = posX;
+    prevY = posY;
+    posX = posX;
+    posY = posY - 1;
+    map_.setObject(prevX, prevY, '.');
+    map_.setObject(posX, posY, 'A');
+}
+
+void Player::downPos(Map &map_)
+{
+    prevX = posX;
+    prevY = posY;
+    posX = posX;
+    posY = posY + 1;
+    map_.setObject(prevX, prevY, '.');
+    map_.setObject(posX, posY, 'A');
+}
+
+void Player::leftPos(Map &map_)
+{
+    prevX = posX;
+    prevY = posY;
+    posX = posX - 1;
+    posY = posY;
+    map_.setObject(prevX, prevY, '.');
+    map_.setObject(posX, posY, 'A');
+}
+
+void Player::rightPos(Map &map_)
+{
+    prevX = posX;
+    prevY = posY;
+    posX = posX + 1;
+    posY = posY;
+    map_.setObject(prevX, prevY, '.');
+    map_.setObject(posX, posY, 'A');
+}
+
 void Player::AlienMove(Map &map_, std::string inp, int x, int y)
 {
-        if (inp == "Up" || inp == "up" || inp == "UP")
+    if (inp == "up" || inp == "UP" || inp == "Up")
+    {
+        do
         {
-            if (newPosY_ == 1)
+            if (posY == 1) //CHANGE THIS TO Y
             {
                 hitBarrier = true;
             }
             else
             {
                 hitBarrier = false;
-                if (map_.getObject(posX_, posY_ - 1) == 'r')
+                char objectOnTop;
+                if (posY != 0)
                 {
+                    objectOnTop = map_.getObject(posX, posY - 1);
+                }
+                switch (objectOnTop)
+                {
+                case 'h':
+                    healthEffect(AlienHp, MaxAlienHp);
+                    if (hitBarrier == false)
+                    {
+                        upPos(map_);
+                    } //print out screen and clear it
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
+                case ' ':
+                    if (hitBarrier == false)
+                    {
+                        upPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees no obstacle in front of it and walks gracefully towards it." << std::endl;
+                    pf::Pause();
+                    break;
+
+                case '^':
+                    if (hitBarrier == false)
+                    {
+                        upPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow in front of it and it pulls the alien upwards." << std::endl;
+                    pf::Pause();
+                    break;
+                
+                case 'v':
+                    if (hitBarrier == false)
+                    {
+                        upPos(map_);
+                    }
                     hitObject = true;
-                }
-                if (map_.getObject(posX_, posY_ - 1) == '^')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ - 1;
-                    inp = "up";
-                    do
-                    {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ - 1) == 'v')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ - 1;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow and a force has pulled upon him downwards" << std::endl;
+                    pf::Pause();
                     inp = "down";
-                    do
+                    break;
+
+                    //continue
+                case '<':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ - 1) == '<')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ - 1;
+                        upPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
+                    pf::Pause();
                     inp = "left";
-                    do
+                    break;
+
+                case '>':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ - 1) == '>')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ - 1;
+                        upPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
+                    pf::Pause();
                     inp = "right";
-                    do
-                    {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                // //
-                else
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ - 1;
+                    break;
+
+                default:
+                    break;
                 }
             }
         }
-        if (inp == "down" || inp == "Down" || inp == "DOWN")
+        while (hitBarrier == false && hitObject == false);
+    }
+    if (inp == "down" || inp == "DOWN" || inp == "Down")
+    {
+        do
         {
-            if (newPosY_ == y)
+            if (posY == y)
             {
                 hitBarrier = true;
             }
             else
             {
                 hitBarrier = false;
-                if (map_.getObject(posX_, posY_ + 1) == 'r')
+                char objectOnTop;
+                if (posY != y)
                 {
+                    objectOnTop = map_.getObject(posX, posY + 1);
+                }                
+                switch (objectOnTop)
+                {
+                case 'h':
+                    healthEffect(AlienHp, MaxAlienHp);
+                    if (hitBarrier == false)
+                    {
+                        downPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
+                case ' ':
+                    if (hitBarrier == false)
+                    {
+                        downPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees no obstacle in front of it and walks gracefully towards it." << std::endl;
+                    pf::Pause();
+                    break;
+
+                case '^':
+                    if (hitBarrier == false)
+                    {
+                        downPos(map_);
+                    }
                     hitObject = true;
-                }
-                if (map_.getObject(posX_, posY_ + 1) == '^')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ + 1;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow in front of it and it pulls the alien upwards." << std::endl;
+                    pf::Pause();
                     inp = "up";
-                    do
+                    break;
+                
+                case 'v':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ + 1) == 'v')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ + 1;
-                    inp = "down";
-                    do
+                        downPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow and a force has pulled upon him downwards" << std::endl;
+                    pf::Pause();
+                    break;
+
+                    //continue
+                case '<':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ + 1) == '<')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ + 1;
+                        downPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
+                    pf::Pause();
                     inp = "left";
-                    do
+                    break;
+
+                case '>':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_, posY_ + 1) == '>')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ + 1;
+                        downPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
+                    pf::Pause();
                     inp = "right";
-                    do
-                    {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                else
-                {
-                    hitObject = false;
-                    newPosX_ = posX_;
-                    newPosY_ = posY_ + 1;
+                    break;
+
+                default:
+                    break;
                 }
             }
         }
-        if (inp == "Left" || inp == "left" || inp == "LEFT")
+        while (hitBarrier == false && hitObject == false);
+    }
+    if (inp == "left" || inp == "LEFT" || inp == "Left")
+    {
+        do
         {
-            if (newPosX_ == 1)
+            if (posX == 1)
             {
                 hitBarrier = true;
             }
             else
             {
                 hitBarrier = false;
-                if (map_.getObject(posX_ - 1, posY_) == 'r')
+                char objectOnTop;
+                if (posX != 0)
                 {
+                    objectOnTop = map_.getObject(posX - 1, posY);
+                }                
+                switch (objectOnTop)
+                {
+                case 'h':
+                    healthEffect(AlienHp, MaxAlienHp);
+                    if (hitBarrier == false)
+                    {
+                        leftPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
+                case ' ':
+                    if (hitBarrier == false)
+                    {
+                        leftPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees no obstacle in front of it and walks gracefully towards it." << std::endl;
+                    pf::Pause();
+                    break;
+
+                case '^':
+                    if (hitBarrier == false)
+                    {
+                        leftPos(map_);
+                    }
                     hitObject = true;
-                }
-                if (map_.getObject(posX_ - 1, posY_) == '^')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_-1;
-                    newPosY_ = posY_;
-                    AlienPlacement(map_);
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow in front of it and it pulls the alien upwards." << std::endl;
+                    pf::Pause();
                     inp = "up";
-                    do
+                    break;
+                
+                case 'v':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_ - 1, posY_) == 'v')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_-1;
-                    newPosY_ = posY_;
-                    AlienPlacement(map_);
+                        leftPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow and a force has pulled upon him downwards" << std::endl;
+                    pf::Pause();
                     inp = "down";
-                    do
+                    break;
+
+                case '<':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_ - 1, posY_) == '<')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_-1;
-                    newPosY_ = posY_;
-                    AlienPlacement(map_);
-                    inp = "left";
-                    do
+                        leftPos(map_);
+                    }                
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
+                    pf::Pause();
+                    break;
+
+                case '>':
+                    if (hitBarrier == false)
                     {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                if (map_.getObject(posX_ - 1, posY_) == '>')
-                {
-                    hitObject = false;
-                    newPosX_ = posX_-1;
-                    newPosY_ = posY_;
-                    AlienPlacement(map_);
+                        leftPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
+                    hitObject = true;
+                    pf::Pause();
                     inp = "right";
-                    do
-                    {
-                        AlienMove(map_, inp, x, y);
-                        AlienPlacement(map_);
-                        pf::ClearScreen();
-                        map_.display();
-                        if (hitBarrier == true)
-                        {
-                            std::cout << "Alien hit the barrier!" << std::endl;
-                            pf::Pause();
-                        }
-                        if (hitObject == true)
-                        {
-                            std::cout << "Alien hit an object!" << std::endl;
-                            pf::Pause();
-                        }
-                    } while (hitBarrier == false && hitObject == false);
-                }
-                else
-                {
-                    hitObject = false;
-                    newPosX_ = posX_ - 1;
-                    newPosY_ = posY_;
+                    break;
+
+                default:
+                    break;
                 }
             }
         }
-        if (inp == "Right" || inp == "right" || inp == "RIGHT")
+        while (hitBarrier == false && hitObject == false);
+    }
+    if (inp == "right" || inp == "RIGHT" || inp == "Right")
+    {
+        do
         {
-            if (newPosX_ == x)
+            if (posX == x)
             {
                 hitBarrier = true;
             }
             else
             {
                 hitBarrier = false;
-                if (map_.getObject(posX_ + 1, posY_) == 'r')
+                char objectOnTop;
+                if (posX != x)
                 {
-                    hitObject = true;
-                }
-                else
+                    objectOnTop = map_.getObject(posX + 1, posY);
+                }                           
+                switch (objectOnTop)
                 {
+                case 'h':
+                    healthEffect(AlienHp, MaxAlienHp);
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    pf::Pause();
+                    break;
+
+                case ' ':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
                     hitObject = false;
-                    newPosX_ = posX_ + 1;
-                    newPosY_ = posY_;
+                    std::cout << "\nAlien sees no obstacle in front of it and walks gracefully towards it." << std::endl;
+                    pf::Pause();
+                    break;
+
+                case '^':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow in front of it and it pulls the alien upwards." << std::endl;
+                    hitObject = true;
+                    pf::Pause();
+                    inp = "up";
+                    break;
+                
+                case 'v':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien sees an arrow and a force has pulled upon him downwards" << std::endl;
+                    pf::Pause();
+                    inp = "down";
+                    break;
+
+                case '<':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
+                    pf::Pause();
+                    inp = "right";             
+                    break;
+
+                case '>':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
+                    pf::Pause();
+                    break;
+                
+                default:
+                    break;
                 }
             }
-        }    
-}
+        }
+        while (hitBarrier == false && hitObject == false);
+    }      
+} 
 
 void Player::AlienPlacement(Map &map_)
 {
-    if (hitBarrier == false && hitObject == false)
-    {
-        map_.setObject(newPosX_, newPosY_, AlienSymbol);
-        map_.setObject(posX_, posY_, '.');
-        posX_ = newPosX_;
-        posY_ = newPosY_;
-    }
+
 }
 
 void Enemy::ZombieCreation()
@@ -530,3 +603,66 @@ void Enemy::ZombieCreation()
     }
 }
 
+
+int main()
+{
+    srand(1);
+    Map m1;
+    Player alien;
+    int irows, icolumns;
+    std::cout << "Enter Rows: ";
+    std::cin >> icolumns; 
+    std::cout << "Enter Columns: ";
+    std::cin >> irows;
+    m1.init(irows, icolumns);
+    alien.InitialLanding(m1, irows, icolumns);
+    pf::ClearScreen();
+    m1.display();
+    std::cout << "Which Direction? ";
+    std::string userInput;
+    std::cin >> userInput;
+    do
+    {
+        alien.AlienMove(m1, userInput, irows, icolumns);
+        alien.AlienPlacement(m1);
+        pf::ClearScreen();
+        m1.display();
+        if (alien.hitBarrier == true)
+        {
+            std::cout << "\nAlien hit the barrier!" << std::endl;
+            pf::Pause();
+        }
+    }
+    while (alien.hitBarrier == false);
+    alien.hitObject = false;
+    std::cout << "Which Direction? ";
+    std::cin >> userInput;
+    do
+    {
+        alien.AlienMove(m1, userInput, irows, icolumns);
+        alien.AlienPlacement(m1);
+        pf::ClearScreen();
+        m1.display();
+        if (alien.hitBarrier == true)
+        {
+            std::cout << "\nAlien hit the barrier!" << std::endl;
+            pf::Pause();
+        }
+    }
+    while (alien.hitBarrier == false);
+    std::cout << "Which Direction? ";
+    std::cin >> userInput;
+    do
+    {
+        alien.AlienMove(m1, userInput, irows, icolumns);
+        alien.AlienPlacement(m1);
+        pf::ClearScreen();
+        m1.display();
+        if (alien.hitBarrier == true)
+        {
+            std::cout << "\nAlien hit the barrier!" << std::endl;
+            pf::Pause();
+        }
+    }
+    while (alien.hitBarrier == false);
+}
