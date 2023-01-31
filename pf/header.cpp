@@ -11,7 +11,7 @@ void Map::init(int rows, int columns)
     int noOfObjects = 12; // number of objects in the objects array
     // create dynamic 2D array using vector
     map_.resize(columns_); // create empty rows
-    for (int i = 0; i < columns_; ++i)
+    for (int i = 0; i < columns_; ++i) 
     {
         map_[i].resize(rows_); // resize each row
     }
@@ -216,7 +216,7 @@ void Player::rightPos(Map &map_)
 void Player::AlienMove(Map &map_, std::string inp, int x, int y)
 {
     Enemy Zombie;
-    if (inp == "up" || inp == "UP" || inp == "Up")
+    if (inp == "up")
     {
         do
         {
@@ -339,7 +339,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "down" || inp == "DOWN" || inp == "Down")
+    if (inp == "down")
     {
         do
         {
@@ -443,7 +443,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "left" || inp == "LEFT" || inp == "Left")
+    if (inp == "left")
     {
         do
         {
@@ -546,7 +546,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "right" || inp == "RIGHT" || inp == "Right")
+    if (inp == "right")
     {
         do
         {

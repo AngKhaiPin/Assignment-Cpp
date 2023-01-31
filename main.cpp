@@ -60,7 +60,7 @@ void ChangeZombieSettings()
     else
     {
         std::cout << "\nSettings Updated.\n";
-        Pause(); 
+        Pause();
     }
 }
 
@@ -116,12 +116,37 @@ void makeBoard()
     map.display();
 }
 
+void HelpCommand()
+{
+    std::cout << "\nCommands";
+    std::cout << "\n1. up        - Move up.";
+    std::cout << "\n2. down      - Move down.";
+    std::cout << "\n3. left      - Move left.";
+    std::cout << "\n4. right     - Move right.";
+    std::cout << "\n5. arrow     - Change the direction of an arrow.";
+    std::cout << "\n6. help      - Display these user commands.";
+    std::cout << "\n7. save      - Save the game.";
+    std::cout << "\n8. load      - Load a game.";
+    std::cout << "\n9. quit      - Quit the game.\n";
+    pf::Pause();
+    pf::ClearScreen();
+    map.display();
+}
+
 void PlayerMovement()
 {
     std::cout << std::endl;
     std::cout << "\n<Command> => ";
     std::string userInput;
     std::cin >> userInput;
+
+    std::for_each(userInput.begin(), userInput.end(), [](char &c)
+                  { c = ::tolower(c); });
+
+    if (userInput == "help")
+    {
+        HelpCommand();
+    }
     do
     {
         Alien.AlienMove(map, userInput, Rows, Columns);
@@ -156,7 +181,7 @@ int main()
     {
         GameOver = false;
     }
-    while(!GameOver)
+    while (!GameOver)
     {
         PlayerMovement();
     }
