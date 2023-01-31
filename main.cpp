@@ -126,16 +126,11 @@ void PlayerMovement()
     {
         Alien.AlienMove(map, userInput, Rows, Columns);
         Alien.AlienPlacement(map);
-        pf::ClearScreen();
-        map.display();
+        // pf::ClearScreen();
+        // map.display();
         if (Alien.hitBarrier == true)
         {
             std::cout << "Alien hit the barrier!" << std::endl;
-            pf::Pause();
-        }
-        if (Alien.hitObject == true)
-        {
-            std::cout << "Alien hit an object!" << std::endl;
             pf::Pause();
         }
     } while (Alien.hitBarrier == false && Alien.hitObject == false);
@@ -155,9 +150,9 @@ int main()
     {
         GameOver = false;
     }
+    makeBoard();
     while(!GameOver)
     {
-        makeBoard();
         PlayerMovement();
     }
 }
