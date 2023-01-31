@@ -53,8 +53,9 @@ List down the contribution of each group members.
 1. Display the column number (fix the issue with number > 10)
 2. Display the row number (fix the issue with number > 10)
 3. Improved on the initial game board code before lab11 was out
-4. Constructed a randomiser function to randomise game objects
-5. Implemented Alien and its movement
+4. Rewrote the game board code with guidance from lab11
+5. Constructed a randomiser function to randomise game objects
+6. Implemented Alien and its movement
 
 ## Problems Encountered & Solutions
 
