@@ -146,6 +146,7 @@ int main()
     srand(1);
     ShowGameSettings();
     pf::ClearScreen();
+    makeBoard();
     // GameOver function might need some juice later on
     if (Zombie.ZombieCount <= 0 || Alien.AlienHp <= 0)
     {
@@ -157,7 +158,6 @@ int main()
     }
     while(!GameOver)
     {
-        makeBoard();
         PlayerMovement();
     }
 }
