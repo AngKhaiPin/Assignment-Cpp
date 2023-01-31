@@ -44,7 +44,7 @@ class Player
         int posY;
         int AlienAtk = 0;
         int randomNum = rand() % 3 + 1;
-        int AlienHp = 100 + (randomNum * 50);
+        int const AlienHp = 100 + (randomNum * 50);
         int const MaxAlienHp = AlienHp;
         void InitialLanding(Map &map_, float x, float y);
         void AlienMove(Map &map_, std::string inp, int x, int y);

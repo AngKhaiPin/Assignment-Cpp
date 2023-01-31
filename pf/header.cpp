@@ -26,9 +26,26 @@ void Map::init(int rows, int columns)
     }
 }
 
+void ShowAlienHUD()
+{
+    Player Alien;
+    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
+}
+
+void ShowZombieHUD()
+{
+    Enemy Zombie;
+    Zombie.ZombieCreation();
+    for (int i = 0; i < Zombie.ZombieCount; i++)
+    {
+        std::cout << '\n'
+                  << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i] << '\n';
+    }
+}
+
 void Map::display() const
 {
-    std:: cout << ".: Alien vs Zombie :." << std::endl;
+    std::cout << ".: Alien vs Zombie :." << std::endl;
 
     // Prints out each row
     for (int i = 0; i < columns_; ++i)
@@ -53,7 +70,8 @@ void Map::display() const
     std::cout << "  ";
     for (int j = 0; j < rows_; ++j)
     {
-        std::cout << "+" << "-";
+        std::cout << "+"
+                  << "-";
     }
     std::cout << "+" << std::endl;
     // display column number
@@ -74,6 +92,8 @@ void Map::display() const
         std::cout << " " << (j + 1) % 10;
     }
     std::cout << std::endl;
+    ShowAlienHUD();
+    ShowZombieHUD();
 }
 
 char Map::getObject(int x, int y) const
@@ -90,27 +110,27 @@ namespace pf
 {
     int ClearScreen()
     {
-        #if defined(_WIN32)
-            return std::system("cls");
-        #elif defined(__linux__) || defined(__APPLE__)
-            return std::system("clear");
-        #endif
+#if defined(_WIN32)
+        return std::system("cls");
+#elif defined(__linux__) || defined(__APPLE__)
+        return std::system("clear");
+#endif
     }
 
     int Pause()
     {
-        #if defined(_WIN32)
-            return std::system("pause");
-        #elif defined(__linux__) || defined(__APPLE__)
-            return std::system(R"(read -p "Press any key to continue . . . " dummy)");
-        #endif
+#if defined(_WIN32)
+        return std::system("pause");
+#elif defined(__linux__) || defined(__APPLE__)
+        return std::system(R"(read -p "Press any key to continue . . . " dummy)");
+#endif
     }
 }
 
 void Player::InitialLanding(Map &map_, float x, float y)
 {
     float middleX, middleY;
-    //Get middle positions based on the size of map
+    // Get middle positions based on the size of map
     middleX = ceil(x / 2);
     middleY = ceil(y / 2);
     posX_ = middleX;
@@ -144,7 +164,7 @@ void healthEffect(int AlienHp, int MaxAlienHp)
     }
 }
 
-void podEffect() //after implement zombies, needs to put in zombies
+void podEffect() // after implement zombies, needs to put in zombies
 {
     std::cout << "Your Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
 }
@@ -195,11 +215,12 @@ void Player::rightPos(Map &map_)
 
 void Player::AlienMove(Map &map_, std::string inp, int x, int y)
 {
+    Enemy Zombie;
     if (inp == "up" || inp == "UP" || inp == "Up")
     {
         do
         {
-            if (posY == 1) //CHANGE THIS TO Y
+            if (posY == 1) // CHANGE THIS TO Y
             {
                 hitBarrier = true;
             }
@@ -213,8 +234,27 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
+                    // For game objects like r, p, h, The alien will move pass it, which means
+                    // the "if" statement is executed, follow by the functions below it.
+                    // case 'r':
+                    //     std::cout << "Alien hit rock!" << std::endl;
+                    //     if (hitBarrier == false)
+                    //     {
+                    //         upPos(map_);
+                    //     }   //print out screen and clear it
+                    //     pf::ClearScreen();
+                    //     map_.display();
+                    //     ShowAlienHUD();
+                    //     ShowZombieHUD();
+                    //     pf::Pause();
+                    //     break;
+
                 case 'p':
                     podEffect();
+                    if (hitBarrier == false)
+                    {
+                        upPos(map_);
+                    }
                     pf::ClearScreen();
                     map_.display();
                     pf::Pause();
@@ -225,7 +265,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     if (hitBarrier == false)
                     {
                         upPos(map_);
-                    } //print out screen and clear it
+                    }
                     pf::ClearScreen();
                     map_.display();
                     pf::Pause();
@@ -252,7 +292,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     std::cout << "\nAlien sees an arrow in front of it and it pulls the alien upwards." << std::endl;
                     pf::Pause();
                     break;
-                
+
                 case 'v':
                     if (hitBarrier == false)
                     {
@@ -266,7 +306,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     inp = "down";
                     break;
 
-                    //continue
+                    // continue
                 case '<':
                     if (hitBarrier == false)
                     {
@@ -297,8 +337,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        }
-        while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false);
     }
     if (inp == "down" || inp == "DOWN" || inp == "Down")
     {
@@ -315,7 +354,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 if (posY != y)
                 {
                     objectOnTop = map_.getObject(posX, posY + 1);
-                }                
+                }
                 switch (objectOnTop)
                 {
                 case 'p':
@@ -359,7 +398,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     pf::Pause();
                     inp = "up";
                     break;
-                
+
                 case 'v':
                     if (hitBarrier == false)
                     {
@@ -371,7 +410,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     pf::Pause();
                     break;
 
-                    //continue
+                    // continue
                 case '<':
                     if (hitBarrier == false)
                     {
@@ -402,8 +441,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        }
-        while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false);
     }
     if (inp == "left" || inp == "LEFT" || inp == "Left")
     {
@@ -420,7 +458,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 if (posX != 0)
                 {
                     objectOnTop = map_.getObject(posX - 1, posY);
-                }                
+                }
                 switch (objectOnTop)
                 {
                 case 'p':
@@ -464,7 +502,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     pf::Pause();
                     inp = "up";
                     break;
-                
+
                 case 'v':
                     if (hitBarrier == false)
                     {
@@ -482,7 +520,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     if (hitBarrier == false)
                     {
                         leftPos(map_);
-                    }                
+                    }
                     pf::ClearScreen();
                     map_.display();
                     std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
@@ -506,8 +544,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        }
-        while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false);
     }
     if (inp == "right" || inp == "RIGHT" || inp == "Right")
     {
@@ -524,7 +561,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 if (posX != x)
                 {
                     objectOnTop = map_.getObject(posX + 1, posY);
-                }                           
+                }
                 switch (objectOnTop)
                 {
                 case 'p':
@@ -569,7 +606,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     pf::Pause();
                     inp = "up";
                     break;
-                
+
                 case 'v':
                     if (hitBarrier == false)
                     {
@@ -593,7 +630,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     map_.display();
                     std::cout << "\nThe force has recognised the alien and decided left was his path." << std::endl;
                     pf::Pause();
-                    inp = "right";             
+                    inp = "right";
                     break;
 
                 case '>':
@@ -606,19 +643,17 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
                     pf::Pause();
                     break;
-                
+
                 default:
                     break;
                 }
             }
-        }
-        while (hitBarrier == false && hitObject == false);
-    }      
-} 
+        } while (hitBarrier == false && hitObject == false);
+    }
+}
 
 void Player::AlienPlacement(Map &map_)
 {
-
 }
 
 void Enemy::ZombieCreation()
@@ -634,7 +669,5 @@ void Enemy::ZombieCreation()
         ZombHpVec.push_back(ZombieHp);
         ZombAtkVec.push_back(ZombieAtk);
         ZombRngVec.push_back(ZombieRange);
-        std::cout << '\n' << "  Zombie " << i + 1 << " : Health " << ZombieHp << ", Attack  " << ZombieAtk << ", Range " << ZombieRange;
     }
 }
-

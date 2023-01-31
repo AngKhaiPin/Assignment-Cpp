@@ -116,16 +116,6 @@ void makeBoard()
     map.display();
 }
 
-void ShowAlienHUD()
-{
-    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
-}
-
-void ShowZombieHUD()
-{
-    Zombie.ZombieCreation();
-}
-
 void PlayerMovement()
 {
     std::cout << std::endl;
@@ -156,11 +146,18 @@ int main()
     srand(1);
     ShowGameSettings();
     pf::ClearScreen();
-    makeBoard();
-    ShowAlienHUD();
-    ShowZombieHUD();
+    // GameOver function might need some juice later on
+    if (Zombie.ZombieCount <= 0 || Alien.AlienHp <= 0)
+    {
+        GameOver = true;
+    }
+    else
+    {
+        GameOver = false;
+    }
     while(!GameOver)
     {
+        makeBoard();
         PlayerMovement();
     }
 }
