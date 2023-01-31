@@ -19,17 +19,24 @@ List all the features completed.
 7. Created both alien and multiple zombies basic attributes (Hp, Atk, Range).
 8. Output multiple zombies attributes.
 9. Store multiple zombies attributes into each separate vectors.
-
+10. Created alien movement.
+11. Added command for player to enter.
+12. Added 'up', 'down', 'left', 'right' command for alien movement.
+13. Added 'help' command.
+14. Alien moves according to command in game board
+15. Alien behaves when encounter objects
+ 
 ### To Do
 
 List all the features not yet done. Remove this section if there is no incomplete requirements.
 
 1. Zombie Implementation
-2. Movement & Attack
-3. Game Objects Functions
-4. Game Controls
-5. Save & Load files
-6. GameFlow
+2. Alien Attack
+3. Zombie Movement and Attack
+4. Game Objects Functions
+5. Game Controls
+6. Save & Load files
+7. GameFlow
 
 ## Additional Features
 
@@ -47,6 +54,7 @@ List down the contribution of each group members.
 4. Display the column number(up till 9)
 5. Constructed Alien and Zombie attributes using class
 6. Constructed Multiple Zombie attributes and store these values in vectors
+7. Added 'help' command and its content
 
 ### 2. LESTER LIEW JUN MIN
 
@@ -55,7 +63,10 @@ List down the contribution of each group members.
 3. Improved on the initial game board code before lab11 was out
 4. Rewrote the game board code with guidance from lab11
 5. Constructed a randomiser function to randomise game objects
-6. Implemented Alien and its movement
+6. Implemented Alien and its movement : 
+7. Added 'up', 'down', 'left', 'right' commands for alien movement.
+8. Implemented functions to create alien movement
+
 
 ## Problems Encountered & Solutions
 
