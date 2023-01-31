@@ -150,22 +150,27 @@ void rockItem(Map &map_, int x, int y)
     map_.setObject(x, y, replacedItem);
 }
 
+void rockEffect()
+{
+    std::cout << "\nAlien hit rock!" << std::endl;
+}
+
 void healthEffect(int AlienHp, int MaxAlienHp)
 {
     if (AlienHp < MaxAlienHp)
     {
-        std::cout << "Your Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
+        std::cout << "\nYour Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
         AlienHp = AlienHp + 20;
     }
     else
     {
-        std::cout << "Your Alien is still healthy. There's no need for recover." << std::endl;
+        std::cout << "\nYour Alien is still healthy. There's no need for recover." << std::endl;
     }
 }
 
 void podEffect() // after implement zombies, needs to put in zombies
 {
-    std::cout << "Your Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
+    std::cout << "\nYour Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
 }
 
 void Player::upPos(Map &map_)
@@ -248,6 +253,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'p':
+                    podEffect();
                     if (hitBarrier == false)
                     {
                         upPos(map_);
@@ -259,13 +265,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
                     {
                         upPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -337,7 +343,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "down" || inp == "DOWN" || inp == "Down")
+    if (inp == "down")
     {
         do
         {
@@ -378,13 +384,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
                     {
                         downPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -456,7 +462,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "left" || inp == "LEFT" || inp == "Left")
+    if (inp == "left")
     {
         do
         {
@@ -497,13 +503,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
                     {
                         leftPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -574,7 +580,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
             }
         } while (hitBarrier == false && hitObject == false);
     }
-    if (inp == "right" || inp == "RIGHT" || inp == "Right")
+    if (inp == "right")
     {
         do
         {
@@ -615,13 +621,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
                     {
                         rightPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
