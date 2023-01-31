@@ -11,7 +11,7 @@ void Map::init(int rows, int columns)
     int noOfObjects = 12; // number of objects in the objects array
     // create dynamic 2D array using vector
     map_.resize(columns_); // create empty rows
-    for (int i = 0; i < columns_; ++i) 
+    for (int i = 0; i < columns_; ++i)
     {
         map_[i].resize(rows_); // resize each row
     }
@@ -151,22 +151,27 @@ void rockItem(Map &map_, int x, int y)
     std::cout << replacedItem;
 }
 
+void rockEffect()
+{
+    std::cout << "\nAlien hit rock!" << std::endl;
+}
+
 void healthEffect(int AlienHp, int MaxAlienHp)
 {
     if (AlienHp < MaxAlienHp)
     {
-        std::cout << "Your Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
+        std::cout << "\nYour Alien has miraculously gained 20 health through the power of healthpack!" << std::endl;
         AlienHp = AlienHp + 20;
     }
     else
     {
-        std::cout << "Your Alien is still healthy. There's no need for recover." << std::endl;
+        std::cout << "\nYour Alien is still healthy. There's no need for recover." << std::endl;
     }
 }
 
 void podEffect() // after implement zombies, needs to put in zombies
 {
-    std::cout << "Your Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
+    std::cout << "\nYour Alien has encountered a pod that deals 10 damage to the nearest zombie!" << std::endl;
 }
 
 void Player::upPos(Map &map_)
@@ -234,40 +239,34 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                    // For game objects like r, p, h, The alien will move pass it, which means
-                    // the "if" statement is executed, follow by the functions below it.
-                    // case 'r':
-                    //     std::cout << "Alien hit rock!" << std::endl;
-                    //     if (hitBarrier == false)
-                    //     {
-                    //         upPos(map_);
-                    //     }   //print out screen and clear it
-                    //     pf::ClearScreen();
-                    //     map_.display();
-                    //     ShowAlienHUD();
-                    //     ShowZombieHUD();
-                    //     pf::Pause();
-                    //     break;
+                //when encountering rock object, alien stops b4 
+                case 'r':
+                    hitObject = true;
+                    pf::ClearScreen();
+                    map_.display();
+                    rockEffect();
+                    pf::Pause();
+                    break;
 
                 case 'p':
-                    podEffect();
                     if (hitBarrier == false)
                     {
                         upPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    podEffect();
                     pf::Pause();
                     break;
 
                 case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
                     if (hitBarrier == false)
                     {
                         upPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -357,21 +356,33 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'p':
-                    podEffect();
+                case 'r':
+                    hitObject = true;
                     pf::ClearScreen();
                     map_.display();
+                    rockEffect();
                     pf::Pause();
                     break;
 
-                case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
+                case 'p':
                     if (hitBarrier == false)
                     {
                         downPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    podEffect();
+                    pf::Pause();
+                    break;
+
+                case 'h':
+                    if (hitBarrier == false)
+                    {
+                        downPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -461,21 +472,33 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'p':
-                    podEffect();
+                case 'r':
+                    hitObject = true;
                     pf::ClearScreen();
                     map_.display();
+                    rockEffect();
                     pf::Pause();
                     break;
 
-                case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
+                case 'p':
                     if (hitBarrier == false)
                     {
                         leftPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    podEffect();
+                    pf::Pause();
+                    break;
+
+                case 'h':
+                    if (hitBarrier == false)
+                    {
+                        leftPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 
@@ -564,21 +587,33 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'p':
-                    podEffect();
+                case 'r':
+                    hitObject = true;
                     pf::ClearScreen();
                     map_.display();
+                    rockEffect();
                     pf::Pause();
                     break;
 
-                case 'h':
-                    healthEffect(AlienHp, MaxAlienHp);
+                case 'p':
                     if (hitBarrier == false)
                     {
                         rightPos(map_);
                     }
                     pf::ClearScreen();
                     map_.display();
+                    podEffect();
+                    pf::Pause();
+                    break;
+
+                case 'h':
+                    if (hitBarrier == false)
+                    {
+                        rightPos(map_);
+                    }
+                    pf::ClearScreen();
+                    map_.display();
+                    healthEffect(AlienHp, MaxAlienHp);
                     pf::Pause();
                     break;
 

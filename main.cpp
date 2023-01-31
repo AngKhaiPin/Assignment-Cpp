@@ -136,7 +136,7 @@ void HelpCommand()
 void PlayerMovement()
 {
     std::cout << std::endl;
-    std::cout << "\n<Command> => ";
+    std::cout << "<Command> => ";
     std::string userInput;
     std::cin >> userInput;
 
@@ -155,12 +155,12 @@ void PlayerMovement()
         map.display();
         if (Alien.hitBarrier == true)
         {
-            std::cout << "Alien hit the barrier!" << std::endl;
+            std::cout << "\nAlien hit the barrier!" << std::endl;
             pf::Pause();
         }
         if (Alien.hitObject == true)
         {
-            std::cout << "Alien hit an object!" << std::endl;
+            std::cout << "\nAlien hit an object!" << std::endl;
             pf::Pause();
         }
     } while (Alien.hitBarrier == false && Alien.hitObject == false);
