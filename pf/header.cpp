@@ -148,7 +148,6 @@ void rockItem(Map &map_, int x, int y)
     int itemsNo = rand() % noOfItems;
     char replacedItem = rockItems[itemsNo];
     map_.setObject(x, y, replacedItem);
-    std::cout << replacedItem;
 }
 
 void rockEffect()
@@ -240,11 +239,14 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 switch (objectOnTop)
                 {
                 //when encountering rock object, alien stops b4 
-                case 'r':
+                case 'r': // Special Case: Rock will stop the alien and change into a random object.
+                    rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    rockEffect();
+                    std::cout << "Alien hit rock!" << std::endl;
+                    ShowAlienHUD();
+                    ShowZombieHUD();
                     pf::Pause();
                     break;
 
@@ -356,11 +358,14 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'r':
+                case 'r': // Special Case: Rock will stop the alien and change into a random object.
+                    rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    rockEffect();
+                    std::cout << "Alien hit rock!" << std::endl;
+                    ShowAlienHUD();
+                    ShowZombieHUD();
                     pf::Pause();
                     break;
 
@@ -472,11 +477,14 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'r':
+                case 'r': // Special Case: Rock will stop the alien and change into a random object.
+                    rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    rockEffect();
+                    std::cout << "Alien hit rock!" << std::endl;
+                    ShowAlienHUD();
+                    ShowZombieHUD();
                     pf::Pause();
                     break;
 
@@ -587,11 +595,14 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                case 'r':
+                case 'r': // Special Case: Rock will stop the alien and change into a random object.
+                    rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    rockEffect();
+                    std::cout << "Alien hit rock!" << std::endl;
+                    ShowAlienHUD();
+                    ShowZombieHUD();
                     pf::Pause();
                     break;
 
