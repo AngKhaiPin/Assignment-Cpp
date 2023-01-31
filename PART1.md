@@ -23,8 +23,7 @@ List all the features completed.
 11. Added command for player to enter.
 12. Added 'up', 'down', 'left', 'right' command for alien movement.
 13. Added 'help' command.
-14. Alien moves according to command in game board
-15. Alien behaves when encounter objects
+14. Alien behaves when encounter objects
  
 ### To Do
 
@@ -37,6 +36,7 @@ List all the features not yet done. Remove this section if there is no incomplet
 5. Game Controls
 6. Save & Load files
 7. GameFlow
+8. Optimisations
 
 ## Additional Features
 
@@ -54,7 +54,7 @@ List down the contribution of each group members.
 4. Display the column number(up till 9)
 5. Constructed Alien and Zombie attributes using class
 6. Constructed Multiple Zombie attributes and store these values in vectors
-7. Added 'help' command and its content
+7. Added 'help' command and its contents
 
 ### 2. LESTER LIEW JUN MIN
 
@@ -63,9 +63,10 @@ List down the contribution of each group members.
 3. Improved on the initial game board code before lab11 was out
 4. Rewrote the game board code with guidance from lab11
 5. Constructed a randomiser function to randomise game objects
-6. Implemented Alien and its movement : 
+6. Implemented Alien and its movement.
 7. Added 'up', 'down', 'left', 'right' commands for alien movement.
 8. Implemented functions to create alien movement
+9. Added a rockItem function which randomly picks an item to replace a rock in front of the alien.
 
 
 ## Problems Encountered & Solutions
