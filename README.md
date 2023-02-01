@@ -12,7 +12,7 @@ Provide instructions on how to compile your program, especially when it is non-t
 
 For example:
 
-1. First type in this code into cmd to construct a .exe file : "g++ pf\*.cpp main.cpp -o main".
+1. First type in this code into cmd to construct a .exe file : "g++ pf\\*.cpp main.cpp -o main".
 2. Second type in ".\main" to run the .exe file.
 
 ## User Manual
