@@ -176,7 +176,6 @@ int main()
     {
         GameOver = false;
     }
-    makeBoard();
     while(!GameOver)
     {
         PlayerMovement();

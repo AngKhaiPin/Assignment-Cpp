@@ -221,7 +221,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
 {
     Enemy Zombie;
     hitObject = false;
-    if (inp == "up" || inp == "UP" || inp == "Up")
+    if (inp == "up")
     {
         do
         {
@@ -241,7 +241,6 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 {
                 case 'r': // Special Case: Rock will stop the alien and change into a random object.
                     rockItem(map_, posX, posY - 1); 
-                    rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
@@ -477,6 +476,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 {
                 case 'r':
                     hitObject = true;
+                    rockItem(map_, posX - 1, posY);
                     pf::ClearScreen();
                     map_.display();
                     rockEffect();
@@ -558,10 +558,10 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         leftPos(map_);
                     }
+                    hitObject = true;
                     pf::ClearScreen();
                     map_.display();
                     std::cout << "\nAlien went to the right because it wanted to be right." << std::endl;
-                    hitObject = true;
                     pf::Pause();
                     inp = "right";
                     break;
@@ -592,11 +592,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 {
                 case 'r':
                     hitObject = true;
+                    rockItem(map_, posX + 1, posY);
                     pf::ClearScreen();
                     map_.display();
                     rockEffect();
                     pf::Pause();
                     break;
+
 
                 case 'p':
                     if (hitBarrier == false)
