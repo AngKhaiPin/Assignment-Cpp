@@ -599,7 +599,6 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     pf::Pause();
                     break;
 
-
                 case 'p':
                     if (hitBarrier == false)
                     {
