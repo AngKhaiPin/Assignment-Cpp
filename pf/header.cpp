@@ -239,20 +239,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 }
                 switch (objectOnTop)
                 {
-                    // For game objects like r, p, h, The alien will move pass it, which means
-                    // the "if" statement is executed, follow by the functions below it.
                 case 'r': // Special Case: Rock will stop the alien and change into a random object.
-                    rockItem(map_, posX, posY - 1); // Special Case: Rock will stop the alien and change into a random object.
+                    rockItem(map_, posX, posY - 1); 
                     rockItem(map_, posX, posY - 1);
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    std::cout << "Alien hit rock!" << std::endl;
-                    ShowAlienHUD();
-                    ShowZombieHUD();
-                    std::cout << "Alien hit rock!" << std::endl;
-                    ShowAlienHUD();
-                    ShowZombieHUD();
+                    rockEffect();
                     pf::Pause();
                     break;
 
@@ -370,9 +363,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     rockItem(map_, posX, posY + 1);
                     pf::ClearScreen();
                     map_.display();
-                    std::cout << "Alien hit rock!" << std::endl;
-                    ShowAlienHUD();
-                    ShowZombieHUD();
+                    rockEffect();
                     pf::Pause();
                     break;
 
@@ -488,9 +479,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    std::cout << "Alien hit rock!" << std::endl;
-                    ShowAlienHUD();
-                    ShowZombieHUD();
+                    rockEffect();
                     pf::Pause();
                     break;
                 
@@ -605,9 +594,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     hitObject = true;
                     pf::ClearScreen();
                     map_.display();
-                    std::cout << "Alien hit rock!" << std::endl;
-                    ShowAlienHUD();
-                    ShowZombieHUD();
+                    rockEffect();
                     pf::Pause();
                     break;
 
