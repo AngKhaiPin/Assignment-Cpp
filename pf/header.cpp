@@ -627,7 +627,6 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     }
                     pf::ClearScreen();
                     map_.display();
-                    hitObject = false;
                     std::cout << "\nAlien sees no obstacle in front of it and walks gracefully towards it." << std::endl;
                     pf::Pause();
                     break;
