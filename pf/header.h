@@ -1,6 +1,5 @@
 #ifndef PF_HELPER_H
 #define PF_HELPER_H
-
 #include <iostream>
 #include <windows.h>
 #include <time.h>
