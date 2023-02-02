@@ -1,19 +1,13 @@
 # Alien vs. Zombie
 
-Please introduce the game here.
+Alien vs. Zombie is a turn-based game where player plays as Alien. Player's objective is to defeat all zombies while staying alive. Player can optimize the game settings by changing the game board dimensions as well as the number of zombies.
 
-You may add one signature screenshot of your program here or above the title. Check out [this tutorial](https://www.digitalocean.com/community/tutorials/markdown-markdown-images) to learn how to do it.
-
-Please provide the YouTube link to your [Video Demo](https://youtube.com).
+Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI).
 
 ## Compilation Instructions
 
-Provide instructions on how to compile your program, especially when it is non-trivial.
-
-For example:
-
-1. First type in this code into cmd to construct a .exe file : "g++ pf\\*.cpp main.cpp -o main".
-2. Second type in ".\main" to run the .exe file.
+1. First, type in this code into cmd to construct a .exe file : "g++ pf\\*.cpp main.cpp -o main".
+2. Second, type in ".\main" to run the .exe file.
 
 ## User Manual
 
