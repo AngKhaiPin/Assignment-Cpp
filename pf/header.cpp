@@ -92,8 +92,6 @@ void Map::display() const
         std::cout << " " << (j + 1) % 10;
     }
     std::cout << std::endl;
-    ShowAlienHUD();
-    ShowZombieHUD();
 }
 
 char Map::getObject(int x, int y) const
