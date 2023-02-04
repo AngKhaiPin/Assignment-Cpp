@@ -110,10 +110,23 @@ void ShowGameSettings()
 void makeBoard()
 {
     // Initialize the gameboard with random objects and alien in middle position
+    // Need to add zombie in the gameboard
     map.init(Rows, Columns);
     Alien.InitialLanding(map, Rows, Columns);
+    Zombie.ZombieLanding(map, Rows, Columns);
     pf::ClearScreen();
     map.display();
+}
+
+void CombatHUD()
+{
+    Zombie.ZombieCreation();
+    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
+    for (int i = 0; i < Zombie.ZombieCount; i++)
+    {
+        std::cout << '\n'
+                  << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+    }
 }
 
 void HelpCommand()
@@ -139,7 +152,6 @@ void PlayerMovement()
     std::cout << "<Command> => ";
     std::string userInput;
     std::cin >> userInput;
-
     std::for_each(userInput.begin(), userInput.end(), [](char &c)
                   { c = ::tolower(c); });
 
@@ -149,16 +161,39 @@ void PlayerMovement()
     }
     do
     {
-        Alien.AlienMove(map, userInput, Rows, Columns);
-        Alien.AlienPlacement(map);
-        // pf::ClearScreen();
-        // map.display();
-        if (Alien.hitBarrier == true)
-        {
-            std::cout << "Alien hit the barrier!" << std::endl;
-            pf::Pause();
-        }
+            Alien.AlienMove(map, userInput, Rows, Columns);
+            Alien.AlienPlacement(map);
+            // pf::ClearScreen();
+            // map.display();
+            if (Alien.hitBarrier == true)
+            {
+                std::cout << "Alien hit the barrier!" << std::endl;
+                pf::Pause();
+            }
     } while (Alien.hitBarrier == false && Alien.hitObject == false);
+}
+
+void EnemyMovement()
+{
+    std::cout << "Zombie's turn" << std::endl;
+}
+
+void Combat()
+{
+    if (Alien.AlienHp >= 0)
+    {
+        CombatHUD();
+        PlayerMovement();
+        replaceDot(map, Rows, Columns);
+        for (int i = 0; i < Zombie.ZombieCount; i++)
+        {
+            if (Zombie.ZombHpVec[i] >= 1)
+            {
+                EnemyMovement();
+                Combat();
+            }
+        }
+    }
 }
 
 int main()
@@ -167,17 +202,6 @@ int main()
     ShowGameSettings();
     pf::ClearScreen();
     makeBoard();
-    // GameOver function might need some juice later on
-    if (Zombie.ZombieCount <= 0 || Alien.AlienHp <= 0)
-    {
-        GameOver = true;
-    }
-    else
-    {
-        GameOver = false;
-    }
-    while(!GameOver)
-    {
-        PlayerMovement();
-    }
+
+    Combat();
 }
