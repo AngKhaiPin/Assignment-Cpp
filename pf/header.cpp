@@ -264,7 +264,6 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
 
                 case 'p':
-                    podEffect();
                     if (hitBarrier == false)
                     {
                         upPos(map_);
