@@ -26,23 +26,6 @@ void Map::init(int rows, int columns)
     }
 }
 
-void ShowAlienHUD()
-{
-    Player Alien;
-    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
-}
-
-void ShowZombieHUD()
-{
-    Enemy Zombie;
-    Zombie.ZombieCreation();
-    for (int i = 0; i < Zombie.ZombieCount; i++)
-    {
-        std::cout << '\n'
-                  << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i] << '\n';
-    }
-}
-
 void Map::display() const
 {
     std::cout << ".: Alien vs Zombie :." << std::endl;
@@ -137,6 +120,40 @@ void Player::InitialLanding(Map &map_, float x, float y)
     posY = posY_;
 
     map_.setObject(middleX, middleY, AlienSymbol);
+}
+
+void Enemy::ZombieLanding(Map &map_, int x, int y)
+{
+    Player Alien;
+    Map map;
+    float randomX, randomY;
+    for (int i = 0; i < ZombieCount; i++)
+    {
+        randomX = rand() % x + 1;
+        randomY = rand() % y + 1;
+        if (randomX == Alien.posX && randomY == Alien.posY)
+        {
+            randomX = rand() % x + 1;
+            randomY = rand() % y + 1;
+            EPosX_ = randomX;
+            EPosY_ = randomY;
+            PosX = EPosX_;
+            PosY = EPosY_;
+            int z = 49 + i;
+
+            map_.setZomPos(randomX, randomY, z);
+        }
+        else
+        {
+            EPosX_ = randomX;
+            EPosY_ = randomY;
+            PosX = EPosX_;
+            PosY = EPosY_;
+            int z = 49 + i;
+
+            map_.setZomPos(randomX, randomY, z);
+        }
+    }
 }
 
 void rockItem(Map &map_, int x, int y)

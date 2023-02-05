@@ -26,7 +26,7 @@ public:
     void display() const;
     char getObject(int x, int y) const;
     void setObject(int x, int y, char ch);
-
+    void setZomPos(int x, int y, int z);
 };
 
 class Player
@@ -70,6 +70,7 @@ public:
     std::vector<int> ZombAtkVec;
     std::vector<int> ZombRngVec;
     void ZombieCreation();
+    void ZombieLanding(Map &map_, int x, int y);
 };
 
 char randomiseItems(char x);

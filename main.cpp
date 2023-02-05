@@ -110,7 +110,7 @@ void ShowGameSettings()
 void makeBoard()
 {
     // Initialize the gameboard with random objects and alien in middle position
-    // Need to add zombie in the gameboard
+    // Zombies are added in the gameboard
     map.init(Rows, Columns);
     Alien.InitialLanding(map, Rows, Columns);
     Zombie.ZombieLanding(map, Rows, Columns);
