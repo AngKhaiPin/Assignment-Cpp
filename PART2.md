@@ -10,9 +10,7 @@ Please provide the YouTube link to your [Video Demo](https://youtube.com).
 
 List all the features completed.
 
-1. Cool Feature #1
-2. Cool Feature #2
-3. *add more*
+1. Major bug fixes on alien movement
 
 ### To Do
 
