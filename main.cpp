@@ -110,7 +110,7 @@ void ShowGameSettings()
 void makeBoard()
 {
     // Initialize the gameboard with random objects and alien in middle position
-    // Zombies are added in the gameboard
+    // Need to add zombie in the gameboard
     map.init(Rows, Columns);
     Alien.InitialLanding(map, Rows, Columns);
     Zombie.ZombieLanding(map, Rows, Columns);
@@ -118,10 +118,11 @@ void makeBoard()
     map.display();
 }
 
-void CombatHUD()
+void Map::CombatHUD()
 {
+    Alien.AlienCreation();
     Zombie.ZombieCreation();
-    std::cout << "\n->Alien    : Health " << Alien.AlienHp << ", Attack  " << Alien.AlienAtk;
+    std::cout << "\n->Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
     for (int i = 0; i < Zombie.ZombieCount; i++)
     {
         std::cout << '\n'
@@ -149,7 +150,7 @@ void HelpCommand()
 void PlayerMovement()
 {
     std::cout << std::endl;
-    std::cout << "<Command> => ";
+    std::cout << "\n<Command> => ";
     std::string userInput;
     std::cin >> userInput;
     std::for_each(userInput.begin(), userInput.end(), [](char &c)
@@ -159,32 +160,50 @@ void PlayerMovement()
     {
         HelpCommand();
     }
+
     do
     {
             Alien.AlienMove(map, userInput, Rows, Columns);
             Alien.AlienPlacement(map);
-            // pf::ClearScreen();
-            // map.display();
             if (Alien.hitBarrier == true)
             {
-                std::cout << "Alien hit the barrier!" << std::endl;
+                pf::ClearScreen();
+                map.display();
+                map.CombatHUD();
+                std::cout << "\n" << "\nAlien hit the barrier!\n" << std::endl;
                 pf::Pause();
             }
     } while (Alien.hitBarrier == false && Alien.hitObject == false);
+
 }
 
 void EnemyMovement()
 {
-    std::cout << "Zombie's turn" << std::endl;
+    pf::ClearScreen();
+    map.display();
+    map.CombatHUD();
+    std::cout << std::endl;
+    for (int i = 0; i < Zombie.ZombieCount; i++)
+    {
+        Zombie.ZombieMove(map, Rows, Columns);
+        pf::ClearScreen();
+        map.display();
+        map.CombatHUD();
+        std::cout << "\n\nZombie " << i+1 << "'s turns ends.\n" << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        map.display();
+    }
 }
 
 void Combat()
 {
     if (Alien.AlienHp >= 0)
     {
-        CombatHUD();
+        map.CombatHUD();
+        Alien.hitObject = false;
         PlayerMovement();
-        replaceDot(map, Rows, Columns);
+        replaceDot(map, Columns, Rows);
         for (int i = 0; i < Zombie.ZombieCount; i++)
         {
             if (Zombie.ZombHpVec[i] >= 1)
@@ -198,7 +217,8 @@ void Combat()
 
 int main()
 {
-    srand(1);
+    //srand(time(NULL));
+    srand(1); //set fixed random value
     ShowGameSettings();
     pf::ClearScreen();
     makeBoard();
