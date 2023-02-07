@@ -14,6 +14,7 @@ List all the features completed.
 2. Implemented the alien trail, replaced the trails with game objects
 3. Implemented zombie movement
 4. Minor bug fixes on some UI : alien movement UI
+5. Implemented multiple zombies movement
 
 ### To Do
 
@@ -42,6 +43,7 @@ For example:
 1. Fixed some of the game UI, during alien movement and when it ends
 2. Implemented zombie movement and its UI
 3. Improved on the rock items, so when alien hits the rock, will print out which object discover
+4. Implemented multiple zombies movement
 
 ### Lester Liew Jun Min
 
