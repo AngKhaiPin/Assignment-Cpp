@@ -32,6 +32,8 @@ List all the features not yet done. Remove this section if there is no incomplet
 
 Describe the additional features that has been implemented.
 
+1. Alien health is change based on number of zombies.
+
 ## Contributions
 
 List down the contribution of each group members.
