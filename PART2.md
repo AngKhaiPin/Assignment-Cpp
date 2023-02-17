@@ -18,8 +18,9 @@ List all the features completed.
 6. Implemented zombie distance calculation for zombie attack
 7. Implemented alien attack zombie
 8. Implemented zombie attack alien
-9. Health pack works correctly according to alien hp
-10. Arrow shown on HUD indicating which in game characters turn
+9. Alien attack reset after its turn
+10. Health pack works correctly according to alien hp
+11. Arrow shown on HUD indicating which in game characters turn
 
 ### To Do
 
