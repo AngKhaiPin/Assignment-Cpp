@@ -10,17 +10,17 @@ Please provide the YouTube link to your [Video Demo](https://youtube.com).
 
 List all the features completed.
 
-1. Major bug fixes on alien movement
-2. Implemented the alien trail, replaced the trails with game objects
-3. Implemented zombie movement
-4. Minor bug fixes on some UI : alien movement UI
-5. Implemented multiple zombies movement
-6. Implemented zombie distance calculation for zombie attack
-7. Implemented alien attack zombie
-8. Implemented zombie attack alien
-9. Alien attack reset after its turn
-10. Health pack works correctly according to alien hp
-11. Arrow shown on HUD indicating which in game characters turn
+1. Major bug fixes on alien movement.
+2. Implemented the alien trail, replaced the trails with game objects.
+3. Implemented zombie movement.
+4. Minor bug fixes on some UI : alien movement UI.
+5. Implemented multiple zombies movement.
+6. Implemented zombie distance calculation for zombie attack.
+7. Implemented alien attack zombie.
+8. Implemented zombie attack alien.
+9. Alien attack reset after its turn.
+10. Health pack works correctly according to alien hp.
+11. Arrow shown on HUD indicating which in game characters turn.
 
 ### To Do
 
@@ -54,24 +54,25 @@ For example:
 
 ### Ang Khai Pin
 
-1. Fixed some of the game UI, during alien movement and when it ends
-2. Implemented zombie movement and its UI
-3. Improved on the rock items, so when alien hits the rock, will print out which object discover
-4. Improved on the health items, so alien hp is recover accordingly
-5. Implemented multiple zombies movement
-6. Implemented alien attack zombie
+1. Fixed some of the game UI, during alien movement and when it ends.
+2. Implemented zombie movement and its UI.
+3. Improved on the rock items, so when alien hits the rock, will print out which object discover.
+4. Improved on the health items, so alien hp is recover accordingly.
+5. Implemented multiple zombies movement.
+6. Refered to Lester's pass by reference method to implement alien attack zombie.
 
 ### Lester Liew Jun Min
 
-1. Major bug fixes on alien movement
-2. Implemented the alien trail and when alien turns ends, object will spawn
-3. Minor bug fixes on zombie movement
-4. Implemented zombie distance calculation for zombie attack
-5. Implemented zombie attack alien
-6. Implemented arrow shown on HUD to show which character's turn
+1. Major bug fixes on alien movement.
+2. Implemented the alien trail and when alien turns ends, object will spawn.
+3. Minor bug fixes on zombie movement.
+4. Implemented zombie distance calculation for zombie attack.
+5. Implemented pass by reference method for zombie attack alien / alien attack zombie.
+6. Implemented zombie attack alien.
+7. Implemented arrow shown on HUD to show which character's turn.
 
 ## Problems Encountered & Solutions
 
 Describe the problems encountered and provide the solutions / plan for the solutions.
 
-1. Unable to retrieve the created vector data for zombie hp, attk, range. Solution: Use pass by reference
+1. Unable to retrieve the created vector data for zombie hp, attk, range / alien hp. Solution: Use pass by reference method.
