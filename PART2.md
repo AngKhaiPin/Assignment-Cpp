@@ -57,8 +57,9 @@ For example:
 1. Fixed some of the game UI, during alien movement and when it ends
 2. Implemented zombie movement and its UI
 3. Improved on the rock items, so when alien hits the rock, will print out which object discover
-4. Implemented multiple zombies movement
-5. Implemented alien attack zombie
+4. Improved on the health items, so alien hp is recover accordingly
+5. Implemented multiple zombies movement
+6. Implemented alien attack zombie
 
 ### Lester Liew Jun Min
 
