@@ -72,4 +72,4 @@ For example:
 
 Describe the problems encountered and provide the solutions / plan for the solutions.
 
-1. Unable to retrieve the created vector data of zombie hp, attk, range. Solution: Use pass by reference
+1. Unable to retrieve the created vector data for zombie hp, attk, range. Solution: Use pass by reference
