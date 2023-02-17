@@ -25,7 +25,12 @@ List all the features completed.
 
 List all the features not yet done. Remove this section if there is no incomplete requirements.
 
-1. after alien defeat zombie (zombie remove from board, no more movement for that zombie, HUD still shows, if all zombie defeated, game ends)
+1. after alien defeat zombie (if all zombie defeated, game ends)
+a) after zombie remove from board
+b) alien will continue that direction
+c) no more movement for that zombie the next turn
+d) HUD still shows the zombie wif 0 hp
+
 2. after alien got defeated by zombie (game ends)
 3. zombie choose new direction if hit alien or zombie
 4. when alien hit pod, deal damage to zombie
