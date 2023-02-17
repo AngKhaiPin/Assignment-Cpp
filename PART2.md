@@ -34,9 +34,8 @@ c) no more movement for that zombie the next turn
 d) HUD still shows the zombie wif 0 hp
 
 3. after alien got defeated by zombie (game ends)
-4. zombie choose new direction if hit alien or zombie
-5. when alien hit pod, deal damage to zombie
-6. Save & Load files
+4. when alien hit pod, deal damage to zombie
+5. Save & Load files
 
 
 ## Additional Features
