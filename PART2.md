@@ -27,9 +27,10 @@ List all the features completed.
 15. Improved on pod object to damage the nearest zombie.
 16. Implemented the part where alien got defeated by zombie.
 17. When alien got defeated by zombie, will ask user restart the game or not.
-18. Added save and load command.
-19. Implemented functions to save and load game files.
-20. 
+18. Added gameover function
+19. Added save and load command.
+20. Implemented functions to save and load game files.
+21. 
 
 ### To Do
 
@@ -68,7 +69,8 @@ For example:
 7. Added quit command
 8. Refered to Lester's pass by reference method to implement alien attack zombie.
 9. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
-10. Implemented the part where alien got defeated by zombie.
+10. Added gameover function to implement the part where alien got defeated by zombie.
+11. 
 
 ### Lester Liew Jun Min
 
