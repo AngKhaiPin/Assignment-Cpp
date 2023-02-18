@@ -22,6 +22,8 @@ List all the features completed.
 10. Alien attack reset after its turn.
 11. Health pack works correctly according to alien hp.
 12. Arrow shown on HUD indicating which in game characters turn.
+13. Added arrow command, user needs to put in correct position and direction.
+14. Added quit command
 
 ### To Do
 
@@ -58,8 +60,10 @@ For example:
 3. Improved on the rock items, so when alien hits the rock, will print out which object discover.
 4. Improved on the health items, so alien hp is recover accordingly.
 5. Implemented multiple zombies movement.
-6. Refered to Lester's pass by reference method to implement alien attack zombie.
-7. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
+6. Added arrow command
+7. Added quit command
+8. Refered to Lester's pass by reference method to implement alien attack zombie.
+9. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
 
 ### Lester Liew Jun Min
 
