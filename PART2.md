@@ -23,7 +23,13 @@ List all the features completed.
 11. Health pack works correctly according to alien hp.
 12. Arrow shown on HUD indicating which in game characters turn.
 13. Added arrow command, user needs to put in correct position and direction.
-14. Added quit command
+14. Added quit command.
+15. Improved on pod object to damage the nearest zombie.
+16. Implemented the part where alien got defeated by zombie.
+17. When alien got defeated by zombie, will ask user restart the game or not.
+18. Added save and load command.
+19. Implemented functions to save and load game files.
+20. 
 
 ### To Do
 
@@ -35,9 +41,7 @@ b) alien will continue that direction
 c) no more movement for that zombie the next turn
 d) HUD still shows the zombie wif 0 hp
 
-2. after alien got defeated by zombie (game ends)
-3. when alien hit pod, deal damage to zombie
-4. Save & Load files
+2. when alien hit pod, after dealing damage, check if zombie is dead or not.
 
 
 ## Additional Features
@@ -64,6 +68,7 @@ For example:
 7. Added quit command
 8. Refered to Lester's pass by reference method to implement alien attack zombie.
 9. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
+10. Implemented the part where alien got defeated by zombie.
 
 ### Lester Liew Jun Min
 
@@ -74,6 +79,11 @@ For example:
 5. Implemented pass by reference method for zombie attack alien / alien attack zombie.
 6. Implemented zombie attack alien.
 7. Implemented arrow shown on HUD to show which character's turn.
+8. Improved on the pod object to deal damage to nearby zombie
+9. Improved on alien got defeated by zombie, reset the values for a new game.
+10. Added save and load command.
+11. Implemented functions to save and load game files.
+12. 
 
 ## Problems Encountered & Solutions
 
