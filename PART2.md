@@ -18,9 +18,10 @@ List all the features completed.
 6. Implemented zombie distance calculation for zombie attack.
 7. Implemented alien attack zombie.
 8. Implemented zombie attack alien.
-9. Alien attack reset after its turn.
-10. Health pack works correctly according to alien hp.
-11. Arrow shown on HUD indicating which in game characters turn.
+9. Print out zombie unable to attack alien when alien not in range.
+10. Alien attack reset after its turn.
+11. Health pack works correctly according to alien hp.
+12. Arrow shown on HUD indicating which in game characters turn.
 
 ### To Do
 
@@ -58,6 +59,7 @@ For example:
 4. Improved on the health items, so alien hp is recover accordingly.
 5. Implemented multiple zombies movement.
 6. Refered to Lester's pass by reference method to implement alien attack zombie.
+7. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
 
 ### Lester Liew Jun Min
 
