@@ -5,7 +5,7 @@
 Youtube Link      : [Video Demo](https://youtu.be/dISNkdj1vAA). <br/>
 Our Personal Github Link :  [GitHub Link](https://github.com/V3ness/PF2223-Assignment)<br/>
 #### **Please refer to our Personal GitHub Link to access the commits, as we usually push our commits to Personal instead of this Repository.**
-##### Please don't mind Lester using his Snezroamia account, his MMU GitHub account is a bit buggy, and isn't fixed yet.
+###### (Please don't mind Lester using his Snezroamia account, his MMU GitHub account is a bit buggy, and isn't fixed yet.)
 
 <br/>
 <img src="https://www.linkpicture.com/q/maxresdefault_6.png" type="image" alt="Bugs can go be damned" width="400">

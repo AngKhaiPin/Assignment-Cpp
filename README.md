@@ -6,8 +6,7 @@ Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI) <br/>
 Part 2 : [Video Demo](https://www.youtube.com/watch?v=dISNkdj1vAA) <br/>
 Our Personal GitHub link : [GitHub Link](https://github.com/V3ness/PF2223-Assignment)
 #### **Please refer to our Personal GitHub Link to access the commits, as we usually push our commits to Personal instead of this Repository.**
-
-##### Please don't mind Lester using his Snezroamia account, his MMU GitHub account is a bit buggy, and isn't fixed yet.<br/><br/>
+###### (Please don't mind Lester using his Snezroamia account, his MMU GitHub account is a bit buggy, and isn't fixed yet.)<br/><br/>
 
 
 ## <u>**Compilation Instructions**</u>
