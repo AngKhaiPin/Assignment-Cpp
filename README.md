@@ -4,7 +4,7 @@ Alien vs. Zombie is a turn-based game where player plays as Alien. Player's obje
 
 Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI) <br/>
 Part 2 : [Video Demo](https://www.youtube.com/watch?v=dISNkdj1vAA) <br/>
-Personal github: 
+Our personal github link : [github](https://github.com/V3ness/PF2223-Assignment)
 
 ## Compilation Instructions
 
