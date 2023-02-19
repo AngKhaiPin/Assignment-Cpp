@@ -831,7 +831,7 @@ void Combat()
 
 int main()
 {
-    // srand(time(NULL));
+    srand(time(NULL));
     Alien.AlienHpVec.clear();
     Alien.AlienMaxHpVec.clear();
     Zombie.ZombPosX.clear();
@@ -842,7 +842,7 @@ int main()
     Zombie.ZombDist.clear();
     Zombie.Defeated.clear();
     Alien.alienTurn = true;
-    srand(1); // set fixed random value
+    // srand(1); // set fixed random value
     difficultyChooser();
     ShowGameSettings();
     pf::ClearScreen();
