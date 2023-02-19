@@ -40,7 +40,10 @@ List all the features completed.
 Describe the additional features that has been implemented.
 
 1. Alien health is change based on number of zombies.
-2. 
+2. Added Encryption System to make sure the user cannot change the file without prior knowledge.
+3. Added "Safety Net" to various places where it requires input from user such as Rows and Columns to avoid situation like having 0 rows or columns (try it out)
+4. A difficulty setting in which preset rows, columns and no. of zombies are set depending on which difficulty the user chose.
+5. The amount of blank spaces will adjust based on amount of grids on the board to make it fair.
 
 ## Contributions
 
@@ -50,15 +53,15 @@ List down the contribution of each group members.
 
 1. Fixed some of the game UI, during alien movement and when it ends.
 2. Implemented zombie movement and its UI.
-3. Improved on the rock items, so when alien hits the rock, will print out which object discover.
-4. Improved on the health items, so alien hp is recover accordingly.
-5. Implemented multiple zombies movement.
-6. Added arrow command
-7. Added quit command
-8. Refered to Lester's pass by reference method to implement alien attack zombie.
-9. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
-10. Added gameover function to implement the part where alien got defeated by zombie.
-11. 
+3. Added additional feature 1.
+4. Improved on the rock items, so when alien hits the rock, will print out which object discover.
+5. Improved on the health items, so alien hp is recover accordingly.
+6. Implemented multiple zombies movement.
+7. Added arrow command
+8. Added quit command
+9. Refered to Lester's pass by reference method to implement alien attack zombie.
+10. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
+11. Added gameover function to implement the part where alien got defeated by zombie.
 
 ### Lester Liew Jun Min
 
@@ -75,7 +78,7 @@ List down the contribution of each group members.
 11. Implemented functions to save and load game files.
 12. Improved on pod object to check if zombie is defeated or not
 13. Implemented the part where zombie got defeated by alien.
-14. 
+14. Added additional features from 2 to 5.
 
 ## Problems Encountered & Solutions
 
