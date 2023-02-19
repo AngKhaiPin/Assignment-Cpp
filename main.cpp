@@ -27,7 +27,7 @@ std::vector<std::vector<char>> board; // Make the board a sort of matrix
 Player Alien;
 Enemy Zombie;
 Map map;
-Encdec encdec;
+Encdec encdec; //Thanks Geeks&Geeks
 
 
 template <typename T> // Overloading Operator "<<" to let std::cout print out vector. (MUST NOT TOUCH)
@@ -40,7 +40,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
     return os;
 }
 
-void Encdec::encrypt()
+void Encdec::encrypt() //Thanks Geeks&Geeks
 {
     std::fstream fin, fout;
  
