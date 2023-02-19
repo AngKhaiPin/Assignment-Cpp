@@ -2,8 +2,8 @@
 
 ## Video Demo
 
-Please provide the YouTube link to your [Video Demo](https://youtube.com). <br/>
-Our personal github link : [github]
+Please provide the YouTube link to your [Video Demo](https://youtu.be/dISNkdj1vAA). <br/>
+Our personal github link : [github](https://github.com/V3ness/PF2223-Assignment)
 
 ## Minimum Requirements
 
@@ -33,7 +33,7 @@ List all the features completed.
 20. Implemented functions to save and load game files.
 21. Improved on pod object to check if zombie is defeated or not.
 22. Implemented the part where zombie got defeated by alien.
-23. When zombie got defeated by alien, zombie will be removed from the board and alien will continue in that direction. 
+23. When zombie got defeated by alien, zombie will be removed from the board and alien will continue in that direction, but sometimes it will stop. 
 
 ## Additional Features
 
