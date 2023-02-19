@@ -2,7 +2,7 @@
 
 ## Video Demo
 
-Please provide the YouTube link to your [Video Demo](https://youtube.com).
+Please provide the YouTube link to your [Video Demo](https://youtube.com). <br/>
 Our personal github link : [github]
 
 ## Minimum Requirements
@@ -34,11 +34,6 @@ List all the features completed.
 21. Improved on pod object to check if zombie is defeated or not.
 22. Implemented the part where zombie got defeated by alien.
 23. When zombie got defeated by alien, zombie will be removed from the board and alien will continue in that direction. 
-
-### To Do
-
-List all the features not yet done. Remove this section if there is no incomplete requirements.
-
 
 ## Additional Features
 
@@ -86,4 +81,4 @@ List down the contribution of each group members.
 
 Describe the problems encountered and provide the solutions / plan for the solutions.
 
-1. Unable to retrieve the created vector data for zombie hp, attk, range / alien hp. Solution: Use pass by reference method.
+1. Unable to retrieve the created vector data for zombie hp, attk, range / alien hp. <br/>Solution: Use pass by reference method.
