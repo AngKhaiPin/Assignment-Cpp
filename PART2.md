@@ -1,13 +1,19 @@
-# Part 2
+# **Part 2**
 
-## Video Demo
+## <u>**Video Demo**</u>
 
-Please provide the YouTube link to your [Video Demo](https://youtu.be/dISNkdj1vAA). <br/>
-Our personal github link : [github](https://github.com/V3ness/PF2223-Assignment)
+Youtube Link      : [Video Demo](https://youtu.be/dISNkdj1vAA). <br/>
+Our Personal Github Link :  [GitHub Link](https://github.com/V3ness/PF2223-Assignment)<br/>
+#### **Please refer to our Personal GitHub Link to access the commits, as we usually push our commits to Personal instead of this Repository.**
 
-## Minimum Requirements
 
-### Completed
+<br/>
+<img src="https://www.linkpicture.com/q/maxresdefault_6.png" type="image" alt="Bugs can go be damned" width="400">
+<br/><br/>
+
+## <u>**Minimum Requirements**</u>
+
+### <u>Completed</u>
 
 List all the features completed.
 
@@ -35,21 +41,21 @@ List all the features completed.
 22. Implemented the part where zombie got defeated by alien.
 23. When zombie got defeated by alien, zombie will be removed from the board and alien will continue in that direction, but sometimes it will stop. 
 
-## Additional Features
+## <u>**Additional Features**</u>
 
 Describe the additional features that has been implemented.
 
-1. Alien health is change based on number of zombies.
+1. Alien health is changed based on number of zombies.
 2. Added Encryption System to make sure the user cannot change the file without prior knowledge.
-3. Added "Safety Net" to various places where it requires input from user such as Rows and Columns to avoid situation like having 0 rows or columns (try it out)
+3. Added "Safety Net" to various places where it requires input from user such as Rows and Columns to avoid situation like having 0 rows or columns ***<u>(try it out)</u>***
 4. A difficulty setting in which preset rows, columns and no. of zombies are set depending on which difficulty the user chose.
 5. The amount of blank spaces will adjust based on amount of grids on the board to make it fair.
 
-## Contributions
+## <u>**Contributions**</u>
 
 List down the contribution of each group members.
 
-### Ang Khai Pin
+### <u>Ang Khai Pin</u>
 
 1. Fixed some of the game UI, during alien movement and when it ends.
 2. Implemented zombie movement and its UI.
@@ -59,11 +65,11 @@ List down the contribution of each group members.
 6. Implemented multiple zombies movement.
 7. Added arrow command
 8. Added quit command
-9. Refered to Lester's pass by reference method to implement alien attack zombie.
+9. Referred to Lester's pass by reference method to implement alien attack zombie.
 10. Improved on the zombie attack alien where zombie is unable to attack alien when not in range.
 11. Added gameover function to implement the part where alien got defeated by zombie.
 
-### Lester Liew Jun Min
+### <u>Lester Liew Jun Min</u>
 
 1. Major bug fixes on alien movement.
 2. Implemented the alien trail and when alien turns ends, object will spawn.
@@ -80,8 +86,24 @@ List down the contribution of each group members.
 13. Implemented the part where zombie got defeated by alien.
 14. Added additional features from 2 to 5.
 
-## Problems Encountered & Solutions
+## <u>**Problems Encountered & Solutions**</u>
 
 Describe the problems encountered and provide the solutions / plan for the solutions.
 
-1. Unable to retrieve the created vector data for zombie hp, attk, range / alien hp. <br/>Solution: Use pass by reference method.
+1. Unable to retrieve the created vector data for zombie hp, atk, range / alien hp. <br/>
+><b>Solution:</b> Use pass by reference method.
+2. The vectors were glitching out when doing save/load function call.
+><b>Solution:</b> Found out it was due to vector size not being transferred properly, and fixed it.
+3. The zombies were constantly crashing into one another and consuming each other
+><b>Solution:</b> Added a bool value for if the zombies are crashing into one another, and made a function to make sure overlapping doesn't happen.
+4. Alien and zombies were going out of bounds and causing ***Segfaults*** (kill me)
+><b>Solution:</b> Added bool for hitBarrier to stop Alien/Zombie from moving any further.
+5. Zombie numbers were going haywire after it moves.
+><b>Solution:</b> Added in a vector inside the Enemy class in order to keep track of it anywhere.
+6. Alien kept on stopping after one input.
+><b>Solution:</b> We just put in an internal loop, as in a function inside of itself.
+7. Players could go into the save file and edit it to gain unfair advantage.
+><b>Solution:</b> Encrypted it, albeit not that secure, but will be better than just leaving it as it is.
+
+
+

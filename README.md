@@ -4,13 +4,14 @@ Alien vs. Zombie is a turn-based game where player plays as Alien. Player's obje
 
 Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI) <br/>
 Part 2 : [Video Demo](https://www.youtube.com/watch?v=dISNkdj1vAA) <br/>
-Our personal github link : [github](https://github.com/V3ness/PF2223-Assignment)
+Our Personal GitHub link : [GitHub Link](https://github.com/V3ness/PF2223-Assignment)
+#### **Please refer to our Personal GitHub Link to access the commits, as we usually push our commits to Personal instead of this Repository.**<br/><br/>
 
 ## Compilation Instructions
 
 1. First, type in this code into cmd to construct a .exe file : "g++ pf\\*.cpp main.cpp -o main".
-2. Second, type in ".\main" to run the .exe file.
-3. The game should pop out in the terminal.
+2. Second, type in ".\main" to run the .exe file, or you can double click on the .exe file that will be on your file.
+3. The game should pop out in the terminal, and then enjoy!
 
 ## User Manual
 
@@ -27,5 +28,5 @@ Please provide the user manual on how to use your program.
 ## Contributors
 
 
-- Ang Khai Ping
+- Ang Khai Pin
 - Lester Liew Jun Min
