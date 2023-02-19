@@ -3,6 +3,7 @@
 ## Video Demo
 
 Please provide the YouTube link to your [Video Demo](https://youtube.com).
+Our personal github link : [github]
 
 ## Minimum Requirements
 
@@ -30,32 +31,25 @@ List all the features completed.
 18. Added gameover function
 19. Added save and load command.
 20. Implemented functions to save and load game files.
-21. Improved on pod object to check if zombie is defeated or not
+21. Improved on pod object to check if zombie is defeated or not.
 22. Implemented the part where zombie got defeated by alien.
-23. When zombie got defeated by alien, the zombie will be removed from the board.
+23. When zombie got defeated by alien, alien needs to run over the zombie to remove it from board.
 
 ### To Do
 
 List all the features not yet done. Remove this section if there is no incomplete requirements.
 
-1. after alien defeat zombie (if all zombie defeated, game ends)
-a) after zombie remove from board
-b) alien will continue that direction
-c) no more movement for that zombie the next turn
-d) HUD still shows the zombie wif 0 hp
 
 ## Additional Features
 
 Describe the additional features that has been implemented.
 
 1. Alien health is change based on number of zombies.
-2. 
+2. When zombie got defeated, alien needs to run over it to secure the kill.
 
 ## Contributions
 
 List down the contribution of each group members.
-
-For example:
 
 ### Ang Khai Pin
 
