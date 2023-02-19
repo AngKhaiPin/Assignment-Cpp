@@ -8,6 +8,7 @@ Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI).
 
 1. First, type in this code into cmd to construct a .exe file : "g++ pf\\*.cpp main.cpp -o main".
 2. Second, type in ".\main" to run the .exe file.
+3. The game should pop out in the terminal.
 
 ## User Manual
 
