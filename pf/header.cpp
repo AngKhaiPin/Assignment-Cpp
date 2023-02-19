@@ -382,6 +382,7 @@ void Player::AlienAttack(int zombieNum, Enemy &Zombie, std::string userInput, Ma
         std::cout << "Zombie " << zombieNum << " is still alive. " << std::endl;
         std::cout << "Health left: " << Zombie.ZombHpVec[zombieNum - 1] << "\n\n";
     }
+    pf::Pause();
 }
 
 void Player::PrintAlienMoveUp()
