@@ -10,10 +10,15 @@
 
 #include "pf/header.h"
 #include <algorithm>
+#include <fstream>
+#include <numeric>
 
 char GSchoice;
 bool GameOver = false;
 int Rows = 9, Columns = 9;
+
+void Combat();
+int main();
 
 std::vector<std::vector<char>> board; // Make the board a sort of matrix
 
@@ -112,6 +117,7 @@ void makeBoard()
     // Initialize the gameboard with random objects and alien in middle position
     // Need to add zombie in the gameboard
     map.init(Rows, Columns);
+    Zombie.ZombDist = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     Alien.InitialLanding(map, Rows, Columns);
     Zombie.ZombieLanding(map, Rows, Columns);
     pf::ClearScreen();
@@ -120,13 +126,163 @@ void makeBoard()
 
 void Map::CombatHUD()
 {
-    Alien.AlienCreation();
+    Alien.AlienCreation(Zombie.ZombieCount);
     Zombie.ZombieCreation();
-    std::cout << "\n->Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
-    for (int i = 0; i < Zombie.ZombieCount; i++)
+    for (size_t i = 0; i < Zombie.Defeated.size(); i++)
     {
-        std::cout << '\n'
-                  << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+        std::cout << i << ": " << Zombie.Defeated[i];
+    }
+    if (Alien.alienTurn == true)
+    {
+        std::cout << "\n\n->Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+        for (int i = 0; i < Zombie.ZombieCount; i++)
+        {
+            std::cout << '\n'
+                      << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+        }
+    }
+    else
+    {
+        switch (Zombie.n)
+        {
+        case 0:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << '\n'
+                      << "->Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
+            for (int i = 1; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 1:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << '\n'
+                      << "  Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
+            std::cout << '\n'
+                      << "->Zombie " << 2 << " : Health " << Zombie.ZombHpVec[1] << ", Attack  " << Zombie.ZombAtkVec[1] << ", Range " << Zombie.ZombRngVec[1];
+            for (int i = 2; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 2:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << '\n'
+                      << "  Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
+            std::cout << '\n'
+                      << "  Zombie " << 2 << " : Health " << Zombie.ZombHpVec[1] << ", Attack  " << Zombie.ZombAtkVec[1] << ", Range " << Zombie.ZombRngVec[1];
+            std::cout << '\n'
+                      << "->Zombie " << 3 << " : Health " << Zombie.ZombHpVec[2] << ", Attack  " << Zombie.ZombAtkVec[2] << ", Range " << Zombie.ZombRngVec[2];
+            for (int i = 3; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 3:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 3; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 4 << " : Health " << Zombie.ZombHpVec[3] << ", Attack  " << Zombie.ZombAtkVec[3] << ", Range " << Zombie.ZombRngVec[3];
+            for (int i = 4; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 4:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 4; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 5 << " : Health " << Zombie.ZombHpVec[4] << ", Attack  " << Zombie.ZombAtkVec[4] << ", Range " << Zombie.ZombRngVec[4];
+            for (int i = 5; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 5:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 5; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 6 << " : Health " << Zombie.ZombHpVec[5] << ", Attack  " << Zombie.ZombAtkVec[5] << ", Range " << Zombie.ZombRngVec[5];
+            for (int i = 6; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 6:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 6; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 7 << " : Health " << Zombie.ZombHpVec[6] << ", Attack  " << Zombie.ZombAtkVec[6] << ", Range " << Zombie.ZombRngVec[6];
+            for (int i = 7; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 7:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 7; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 8 << " : Health " << Zombie.ZombHpVec[7] << ", Attack  " << Zombie.ZombAtkVec[7] << ", Range " << Zombie.ZombRngVec[7];
+            for (int i = 8; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        case 8:
+            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            for (int i = 0; i < 8; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            std::cout << '\n'
+                      << "->Zombie " << 9 << " : Health " << Zombie.ZombHpVec[8] << ", Attack  " << Zombie.ZombAtkVec[8] << ", Range " << Zombie.ZombRngVec[8];
+            for (int i = 9; i < Zombie.ZombieCount; i++)
+            {
+                std::cout << '\n'
+                          << "  Zombie " << i + 1 << " : Health " << Zombie.ZombHpVec[i] << ", Attack  " << Zombie.ZombAtkVec[i] << ", Range " << Zombie.ZombRngVec[i];
+            }
+            break;
+
+        default:
+            break;
+        }
     }
 }
 
@@ -145,10 +301,156 @@ void HelpCommand()
     pf::Pause();
     pf::ClearScreen();
     map.display();
+    Combat();
+}
+
+void ArrowCommand()
+{
+    int Arow, Acolumn;
+    std::string Adirec;
+    char ch;
+    std::cout << "\nEnter row, column, and direction: ";
+    std::cin >> Arow >> Acolumn >> Adirec;
+
+    std::for_each(Adirec.begin(), Adirec.end(), [](char &c)
+                  { c = ::tolower(c); });
+
+    ch = map.getObject(Acolumn, Arow);
+    if (ch == '^' || ch == 'v' || ch == '<' || ch == '>')
+    {
+        if (Adirec == "up")
+        {
+            map.setObject(Acolumn, Arow, '^');
+            std::cout << "Arrow object changed from " << ch << " to ^." << std::endl;
+            pf::Pause();
+            pf::ClearScreen();
+            map.display();
+            Combat();
+        }
+        else if (Adirec == "down")
+        {
+            map.setObject(Acolumn, Arow, 'v');
+            std::cout << "Arrow object changed from " << ch << " to V." << std::endl;
+            pf::Pause();
+            pf::ClearScreen();
+            map.display();
+            Combat();
+        }
+        else if (Adirec == "left")
+        {
+            map.setObject(Acolumn, Arow, '<');
+            std::cout << "Arrow object changed from " << ch << " to <." << std::endl;
+            pf::Pause();
+            pf::ClearScreen();
+            map.display();
+            Combat();
+        }
+        else if (Adirec == "right")
+        {
+            map.setObject(Acolumn, Arow, '>');
+            std::cout << "Arrow object changed from " << ch << " to >." << std::endl;
+            pf::Pause();
+            pf::ClearScreen();
+            map.display();
+            Combat();
+        }
+        else
+        {
+            std::cout << "Invalid direction." << std::endl;
+            pf::Pause();
+            pf::ClearScreen();
+            map.display();
+            Combat();
+        }
+    }
+    else
+    {
+        std::cout << "Please ensure that the position contains an arrow object." << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        map.display();
+        Combat();
+    }
+}
+
+void QuitCommand()
+{
+    char ans;
+    std::cout << "\nAre you sure? (y/n): ";
+    std::cin >> ans;
+    if (ans == 'y' || ans == 'Y')
+    {
+        std::cout << "\n\nGoodbye!" << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        exit(0);
+    }
+    else
+    {
+        Combat();
+    }
+}
+
+bool repeatLoad;
+
+void loadGame(std::string fileName, Map &map, Player &alien, Enemy &zombie) // Add file name here to customise it
+{
+    std::ifstream inFile(fileName);
+    inFile >> map.rows >> map.columns;
+    inFile >> alien.posX >> alien.posY;
+    inFile >> zombie.ZombieCount;
+    for (int i = 0; i < zombie.ZombieCount; i++)
+    {
+        inFile >> zombie.ZombPosX[i] >> zombie.ZombPosY[i] >> zombie.ZombHpVec[i] >> zombie.ZombAtkVec[i] >> zombie.ZombRngVec[i];
+    }
+    inFile >> alien.AlienHpVec[0] >> alien.AlienAtk;
+    map.init(map.rows, map.columns);
+    for (int i = 0; i < map.columns; i++)
+    {
+        for (int j = 0; j < map.rows; j++)
+        {
+            inFile >> std::noskipws >> map.map_[i][j];
+        }
+    }
+    inFile.close();
+    std::cout << "Game loaded successfully. \n\nThere might be certain areas in which the data is wrong, \nPlease write load again until the data is consistent\n"
+              << std::endl;
+    pf::Pause();
+    pf::ClearScreen();
+    map.display();
+    Combat();
+}
+
+void saveGame(std::string fileName, Map &map, Player &alien, Enemy &zombie)
+{
+    std::ofstream outFile(fileName);
+    outFile << map.rows << " " << map.columns << std::endl;
+    outFile << alien.posX << " " << alien.posY << std::endl;
+    outFile << zombie.ZombieCount << std::endl;
+    for (int i = 0; i < zombie.ZombieCount; i++)
+    {
+        outFile << zombie.ZombPosX[i] << " " << zombie.ZombPosY[i] << " " << zombie.ZombHpVec[i]
+                << " " << zombie.ZombAtkVec[i] << " " << zombie.ZombRngVec[i] << std::endl;
+    }
+    outFile << alien.AlienHpVec[0] << " " << alien.AlienAtk;
+    for (int i = 0; i < map.columns; i++)
+    {
+        for (int j = 0; j < map.rows; j++)
+        {
+            outFile << map.map_[i][j];
+        }
+    }
+    outFile.close();
+    std::cout << "Game saved successfully." << std::endl;
+    pf::Pause();
+    pf::ClearScreen();
+    map.display();
+    Combat();
 }
 
 void PlayerMovement()
 {
+    Alien.alienTurn = true;
     std::cout << std::endl;
     std::cout << "\n<Command> => ";
     std::string userInput;
@@ -160,28 +462,186 @@ void PlayerMovement()
     {
         HelpCommand();
     }
-
-    do
+    else if (userInput == "arrow")
     {
-        Alien.AlienMove(map, userInput, Rows, Columns);
-        Alien.AlienPlacement(map);
-        if (Alien.hitBarrier == true)
+        ArrowCommand();
+    }
+    else if (userInput == "quit")
+    {
+        QuitCommand();
+    }
+    else if (userInput == "save")
+    {
+        std::string fileName;
+        std::cout << "Please name your file: ";
+        std::cin >> fileName;
+        saveGame(fileName, map, Alien, Zombie);
+    }
+    else if (userInput == "load")
+    {
+        std::string fileName;
+        char choice;
+        std::cout << "Do you want to save the current game? (y/n)> ";
+        std::cin >> choice;
+        if (choice == 'y' || choice == 'Y')
         {
+            std::cout << "Please name your file: ";
+            std::cin >> fileName;
+            saveGame(fileName, map, Alien, Zombie);
+        }
+        else if (choice == 'n' || choice == 'N')
+        {
+            std::cout << "Please insert the name of your save file: ";
+            std::cin >> fileName;
+            loadGame(fileName, map, Alien, Zombie);
+        }
+        else
+        {
+            std::cout << "\nInvalid Input." << std::endl;
+            pf::Pause();
             pf::ClearScreen();
             map.display();
-            map.CombatHUD();
-            std::cout << "\n"
-                      << "\nAlien hit the barrier!\n"
-                      << std::endl;
-            pf::Pause();
+            Combat();
         }
-    } while (Alien.hitBarrier == false && Alien.hitObject == false);
+    }
+    else if (userInput == "up" || userInput == "down" || userInput == "left" || userInput == "right")
+    {
+        do
+        {
+            Alien.AlienMove(map, Zombie, Alien, userInput, Rows, Columns);
+            Alien.AlienPlacement(map);
+            if (Alien.hitBarrier == true)
+            {
+                pf::ClearScreen();
+                map.display();
+                map.CombatHUD();
+                std::cout << "\n"
+                          << "\nAlien hit the barrier!\n"
+                          << std::endl;
+                pf::Pause();
+            }
+            if (Alien.hitZombie == true)
+            {
+                pf::ClearScreen();
+                map.display();
+                map.CombatHUD();
+                std::cout << "\n"
+                          << "\nAlien attack Zombie " << Alien.AlienZomb << "." << std::endl;
+                Alien.AlienAttack(Alien.AlienZomb, Zombie);
+                pf::Pause();
+            }
+        } while (Alien.hitBarrier == false && Alien.hitObject == false && Alien.hitZombie == false);
+    }
+    else
+    {
+        std::cout << "Oops! Invalid Input." << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        map.display();
+        Combat();
+    }
+}
+
+int CalcZombDistance(int i)
+{
+    int distance;
+    distance = (abs(Alien.posX - Zombie.ZombPosX[i]) + abs(Alien.posY - Zombie.ZombPosY[i]));
+    return distance;
+}
+
+int CompareZombDistance() // Use this to calculate the nearest Zombie
+{
+    int x;
+    int nearest = 5000;
+    int nearestZomb = 0;
+    for (int i = 0; i < Zombie.ZombieCount; i++)
+    {
+        x = Zombie.ZombDist.at(i);
+        if (x < nearest)
+        {
+            nearest = x;
+            nearestZomb = i + 1;
+        }
+    }
+    return nearestZomb;
+}
+
+void podEffect()
+{
+    int distance;
+    for (int i = 0; i < Zombie.ZombieCount; i++)
+    {
+        distance = CalcZombDistance(i);
+        // std::cout << "\nZombie " << i + 1 << " Distance : " << distance << std::endl;
+        Zombie.ZombDist[i] = distance;
+        Zombie.nearestZomb = CompareZombDistance();
+    }
+    Zombie.ZombHpVec[Zombie.nearestZomb - 1] = Zombie.ZombHpVec[Zombie.nearestZomb - 1] - 10;
+}
+
+void podMessage()
+{
+    std::cout << "\n\nAlien has encountered a pod that deals 10 damage to the nearest zombie, "
+              << "which is Zombie " << Zombie.nearestZomb
+              << std::endl;
+    if (Zombie.ZombHpVec[Zombie.nearestZomb - 1] <= 0)
+    {
+        std::cout << "Alien has defeated zombie " << Zombie.nearestZomb << "." << std::endl;
+        Zombie.ZombHpVec[Zombie.nearestZomb - 1] = 0;
+        Zombie.Defeated[Zombie.nearestZomb - 1] = true;
+    }
+    else
+    {
+        std::cout << "Zombie " << Zombie.nearestZomb << " is stil alive. " << std::endl;
+        std::cout << "Health left: " << Zombie.ZombHpVec[Zombie.nearestZomb - 1] << "\n\n";
+    }
+}
+
+void gameover(Player &Alien, Enemy &Zombie)
+{
+    char choice;
+    std::cout << "Play again? (y/n)> ";
+    std::cin >> choice;
+    if (choice == 'y' || choice == 'Y')
+    {
+        map.lastroundX = map.rows;
+        map.lastroundY = map.columns;
+        Alien.AlienHpVec.clear();
+        Alien.AlienMaxHpVec.clear();
+        Zombie.ZombPosX.clear();
+        Zombie.ZombPosY.clear();
+        Zombie.ZombHpVec.clear();
+        Zombie.ZombAtkVec.clear();
+        Zombie.ZombRngVec.clear();
+        Zombie.ZombDist.clear();
+        Zombie.count = 49;
+        Zombie.n = 0;
+        map.map_.clear();
+        main();
+    }
+    else if (choice == 'n' || choice == 'N')
+    {
+        std::cout << "\nGoodbye!" << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        exit(0);
+    }
+    else
+    {
+        std::cout << "\nInvalid input" << std::endl;
+        gameover(Alien, Zombie);
+    }
 }
 
 void EnemyMovement()
 {
-    std::cout << std::endl;
+    Alien.AlienAtk = 500;
     Zombie.ZombieMove(map, Rows, Columns);
+    pf::ClearScreen();
+    map.display();
+    map.CombatHUD();
+    Zombie.ZombDist.at(Zombie.n) = CalcZombDistance(Zombie.n);
+    Zombie.ZombieAttack(Zombie.n, Alien, map);
     pf::ClearScreen();
     map.display();
     map.CombatHUD();
@@ -195,23 +655,43 @@ void EnemyMovement()
 
 void Combat()
 {
+    int distance;
     if (Alien.AlienHp >= 0)
     {
+        if ((Zombie.Defeated.end() == std::find(Zombie.Defeated.begin(), Zombie.Defeated.end(), false)))
+        {
+            pf::ClearScreen();
+            map.display();
+            map.CombatHUD();
+            std::cout << "\n\nYou won!\n";
+            gameover(Alien, Zombie);
+        }
         map.CombatHUD();
+        for (int i = 0; i < Zombie.ZombieCount; i++)
+        {
+            distance = CalcZombDistance(i);
+            // std::cout << "\nZombie " << i + 1 << " Distance : " << distance << std::endl;
+            Zombie.ZombDist[i] = distance;
+            Zombie.nearestZomb = CompareZombDistance();
+        }
+        // std::cout << "Nearest Zombie is: " << CompareZombDistance() << std::endl;
         Alien.hitObject = false;
+        Alien.hitZombie = false;
+
         PlayerMovement();
         replaceDot(map, Columns, Rows);
         for (int i = 0; i < Zombie.ZombieCount; i++)
         {
+            Alien.alienTurn = false;
             if (Zombie.ZombHpVec[i] >= 1)
             {
                 EnemyMovement();
-                Zombie.count = 49; 
+                Zombie.count = 49;
             }
         }
-        //resets the zombie value on both gameboard and HUD
-        Zombie.n = 0; 
-        Zombie.count = 49; 
+        // resets the zombie value on both gameboard and HUD
+        Zombie.n = 0;
+        Alien.alienTurn = true;
         Combat();
     }
 }
@@ -219,10 +699,21 @@ void Combat()
 int main()
 {
     // srand(time(NULL));
+    Alien.AlienHpVec.clear();
+    Alien.AlienMaxHpVec.clear();
+    Zombie.ZombPosX.clear();
+    Zombie.ZombPosY.clear();
+    Zombie.ZombHpVec.clear();
+    Zombie.ZombAtkVec.clear();
+    Zombie.ZombRngVec.clear();
+    Zombie.ZombDist.clear();
+    Zombie.Defeated.clear();
+    Alien.alienTurn = true;
     srand(1); // set fixed random value
     ShowGameSettings();
     pf::ClearScreen();
     makeBoard();
+    Zombie.Defeated.resize(Zombie.ZombieCount, false);
 
     Combat();
 }

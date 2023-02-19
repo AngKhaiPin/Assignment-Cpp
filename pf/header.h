@@ -9,6 +9,10 @@
 #include <cmath>
 #include <iomanip>
 
+class Enemy;
+
+class Player;
+
 namespace pf
 {
     int ClearScreen();
@@ -17,12 +21,13 @@ namespace pf
 
 class Map
 {
-    std::vector<std::vector<char>> map_;
     int rows_, columns_;
 
 public:
+    std::vector<std::vector<char>> map_;
     int rows, columns;
     int itemsNo;
+    int lastroundX, lastroundY;
     void rockItem(Map &map_, int x, int y);
     void rockEffect();
     void init(int rows, int columns);
@@ -33,32 +38,42 @@ public:
     void CombatHUD();
 };
 
+class Enemy;
+
 class Player
 {
     char AlienSymbol = 'A';
     int posX_, posY_;
 
     public:
+        char prevObj;
         bool hitObject;
         bool hitBarrier;
-        char prevObj;
+        bool hitZombie;
+        bool alienTurn;
+        int AlienZomb;
         int prevX;
         int prevY;
         int posX;
         int posY;
-        int AlienAtk = 0;
-        int randomNum = rand() % 3 + 1;
-        int const AlienHp = 100 + (randomNum * 50);
-        int const MaxAlienHp = AlienHp;
+        int AlienAtk = 500;
+        int AlienHp;
         std::vector<int> AlienHpVec;
-        void AlienCreation();
+        std::vector<int> AlienMaxHpVec;
+        void AlienCreation(int ZombCount);
         void InitialLanding(Map &map_, float x, float y);
-        void AlienMove(Map &map_, std::string inp, int x, int y);
+        void AlienMove(Map &map_, Enemy &Zombie, Player &Alien, std::string inp, int x, int y);
         void AlienPlacement(Map &map_);
         void upPos(Map &map_);
         void downPos(Map &map_);
         void leftPos(Map &map_);
         void rightPos(Map &map_);
+        void PrintAlienMoveUp();
+        void PrintAlienMoveDown();
+        void PrintAlienMoveLeft();
+        void PrintAlienMoveRight();
+        void AlienAttack(int zombieNum, Enemy &Zombie);
+        void healthEffect();
 };
 
 class Enemy
@@ -74,29 +89,33 @@ public:
     int randomHp = rand() % 2 + 1;
     int randomAtk = rand() % 2 + 1;
     int randomRng = rand() % 5 + 1;
-    int ZombieCount = 2;
-    int ZombieHp = 100 + (randomHp * 50);
+    int ZombieCount = 1;
+    int ZombieHp = 50 + (randomHp * 50);
     int ZombieAtk = 5 + (randomAtk * 5);
     int ZombieRange = randomRng;
+    int nearestZomb;
+    int ZombiesDead;
     int count = 49; // use to display zombie on the gameboard
     int n = 0; // use to display zombie no. on the HUD
+    std::vector<bool> Defeated;
     std::vector<int> ZombPosX; // vector to store each zombie's position x
     std::vector<int> ZombPosY; // vector to store each zombie's position y
     std::vector<int> ZombHpVec;
     std::vector<int> ZombAtkVec;
     std::vector<int> ZombRngVec;
+    std::vector<int> ZombDist;
     void ZombieCreation();
     void ZombieLanding(Map &map_, int x, int y);
     void ZombieMove(Map &map_, int x, int y);
+    void ZombieAttack(int zombieNum, Player &Alien, Map &map_);
     void upPos(Map &map_, int x);
     void downPos(Map &map_, int x);
     void leftPos(Map &map_, int x);
     void rightPos(Map &map_, int x);
+    void ZombieDefeated(int zombieNum, Map &map_, int x, int y);
 };
 
 void replaceDot(Map &map_, int rows, int columns);
-
 char randomiseItems(char x);
 
 #endif
-

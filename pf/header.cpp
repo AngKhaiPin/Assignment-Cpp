@@ -2,6 +2,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
+#include <fstream>
+
+void gameover(Player &Alien, Enemy &Zombie);
 
 void Map::init(int rows1, int columns1)
 {
@@ -33,11 +36,11 @@ void Map::display() const
     std::cout << ".: Alien vs Zombie :." << std::endl;
 
     // Prints out each row
-    for (int i = 0; i < columns_; ++i)
+    for (int i = 0; i < columns; ++i)
     {
         // Displays border for top row
         std::cout << "  ";
-        for (int j = 0; j < rows_; ++j)
+        for (int j = 0; j < rows; ++j)
         {
             std::cout << "+-";
         }
@@ -45,7 +48,7 @@ void Map::display() const
         // Displays Row Number
         std::cout << std::setw(2) << (i + 1);
         // Displays the vector contents and border in between them
-        for (int j = 0; j < rows_; ++j)
+        for (int j = 0; j < rows; ++j)
         {
             std::cout << "|" << map_[i][j];
         }
@@ -53,7 +56,7 @@ void Map::display() const
     }
     // Display the border for the last row
     std::cout << "  ";
-    for (int j = 0; j < rows_; ++j)
+    for (int j = 0; j < rows; ++j)
     {
         std::cout << "+"
                   << "-";
@@ -61,7 +64,7 @@ void Map::display() const
     std::cout << "+" << std::endl;
     // display column number
     std::cout << "  ";
-    for (int j = 0; j < rows_; ++j)
+    for (int j = 0; j < rows; ++j)
     {
         int digit = (j + 1) / 10;
         std::cout << " ";
@@ -72,7 +75,7 @@ void Map::display() const
     }
     std::cout << std::endl;
     std::cout << "  ";
-    for (int j = 0; j < rows_; ++j)
+    for (int j = 0; j < rows; ++j)
     {
         std::cout << " " << (j + 1) % 10;
     }
@@ -140,13 +143,27 @@ namespace pf
     }
 }
 
-void Player::AlienCreation()
+void Player::AlienCreation(int ZombCount)
 {
-    int AlienAtk = 0;
-    int randomNum = rand() % 3 + 1;
-    int const AlienHp = 100 + (randomNum * 50);
-    int const MaxAlienHp = AlienHp;
+    int AlienAtk = 500;
+    if (ZombCount <= 2)
+    {
+        AlienHp = 100;
+    }
+    else if (ZombCount <= 5)
+    {
+        AlienHp = 150;   
+    }
+    else if (ZombCount <= 7)
+    {
+        AlienHp = 200;     
+    }
+    else if (ZombCount <= 9)
+    {
+        AlienHp = 250;    
+    }
     AlienHpVec.push_back(AlienHp);
+    AlienMaxHpVec.push_back(AlienHp);
 }
 
 void Player::InitialLanding(Map &map_, float x, float y)
@@ -166,8 +183,14 @@ void Player::InitialLanding(Map &map_, float x, float y)
 void Enemy::ZombieLanding(Map &map_, int x, int y)
 {
     Player Alien;
-    Map map;
     float randomX, randomY;
+    // testing purpose
+    // int i = 4, j = 5;
+    // map_.setZomPos(i , j, 49);
+    // ZombPosX.push_back(i);
+    // ZombPosY.push_back(j);
+    // testing purpose
+
     for (int i = 0; i < ZombieCount; i++)
     {
         randomX = rand() % x + 1;
@@ -199,8 +222,8 @@ void Enemy::ZombieLanding(Map &map_, int x, int y)
 
 void Map::rockItem(Map &map_, int x, int y)
 {
-    char rockItems[] = {'h', 'p', '^', 'v', '<', '>', ' '};
-    int noOfItems = 7;
+    char rockItems[] = {'h', 'p', '^', 'v', '<', '>', ' ', ' ', ' ', ' ', ' ', ' '};
+    int noOfItems = 12;
     itemsNo = rand() % noOfItems;
     char replacedItem = rockItems[itemsNo];
     map_.setObject(x, y, replacedItem);
@@ -246,13 +269,28 @@ void Map::rockEffect()
     }
 }
 
-void healthEffect(int AlienHp, int MaxAlienHp)
+void Player::healthEffect()
 {
-    if (AlienHp < MaxAlienHp)
+    if (AlienHpVec[0] < AlienMaxHpVec[0])
     {
         std::cout << "\n\nAlien has miraculously gained 20 health through the power of healthpack!\n"
                   << std::endl;
-        AlienHp = AlienHp + 20;
+        if (AlienHpVec[0] == AlienMaxHpVec[0] - 5)
+        {
+            AlienHpVec[0] = AlienHpVec[0] + 5;
+        }
+        else if (AlienHpVec[0] == AlienMaxHpVec[0] - 10)
+        {
+            AlienHpVec[0] = AlienHpVec[0] + 10;
+        }
+        else if (AlienHpVec[0] == AlienMaxHpVec[0] - 15)
+        {
+            AlienHpVec[0] = AlienHpVec[0] + 15;
+        }
+        else
+        {
+            AlienHpVec[0] = AlienHpVec[0] + 20;
+        }
     }
     else
     {
@@ -261,10 +299,9 @@ void healthEffect(int AlienHp, int MaxAlienHp)
     }
 }
 
-void podEffect() // after implement zombies, needs to put in zombies
+void dotEffect()
 {
-    std::cout << "\n\nAlien has encountered a pod that deals 10 damage to the nearest zombie!\n"
-              << std::endl;
+    std::cout << "\n\nAlien has gone back the path it travel before.\n" << std::endl;
 }
 
 void Player::upPos(Map &map_)
@@ -307,34 +344,57 @@ void Player::rightPos(Map &map_)
     map_.setObject(posX, posY, 'A');
 }
 
-void PrintAlienMoveUp()
+void Player::AlienAttack(int zombieNum, Enemy &Zombie)
 {
+    Zombie.ZombHpVec[zombieNum - 1] = Zombie.ZombHpVec[zombieNum - 1] - AlienAtk;
+    std::cout << "Alien has dealt " << AlienAtk << " damage to Zombie " << zombieNum << "." << std::endl;
+    if (Zombie.ZombHpVec[zombieNum - 1] <= 0)
+    {
+        std::cout << "Alien has defeated zombie " << zombieNum << ".\n" << std::endl;
+        Zombie.ZombHpVec[zombieNum - 1] = 0;
+        Zombie.Defeated[zombieNum - 1] = true;
+    }
+    else
+    {
+        std::cout << "Zombie " << zombieNum << " is still alive. " << std::endl;
+        std::cout << "Health left: " << Zombie.ZombHpVec[zombieNum - 1] << "\n\n";
+    }
+}
+
+void Player::PrintAlienMoveUp()
+{
+    AlienAtk += 20;
     std::cout << "\n\nAlien sees an arrow in front of it and it pulls the alien UPWARDS.\n"
     << std::endl;
 }
 
-void PrintAlienMoveDown()
+void Player::PrintAlienMoveDown()
 {
+    AlienAtk += 20;
     std::cout << "\n\nAlien sees an arrow and a force has pulled upon him DOWNWARDS.\n"
     << std::endl;
 }
 
-void PrintAlienMoveLeft()
+void Player::PrintAlienMoveLeft()
 {
+    AlienAtk += 20;
     std::cout << "\n\nThe force has recognised the alien and decided LEFT was his path.\n"
     << std::endl;
 }
 
-void PrintAlienMoveRight()
+void Player::PrintAlienMoveRight()
 {
+    AlienAtk += 20;
     std::cout << "\n\nAlien went to the RIGHT because it wanted to be right.\n"
     << std::endl;
 }
 
-void Player::AlienMove(Map &map_, std::string inp, int x, int y)
+void podEffect();
+void podMessage();
+
+
+void Player::AlienMove(Map &map, Enemy &Zombie, Player &Alien, std::string inp, int x, int y)
 {
-    Map map;
-    Enemy Zombie;
     if (inp == "up")
     {
         do
@@ -350,16 +410,224 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 char objectOnTop;
                 if (posY != 0)
                 {
-                    objectOnTop = map_.getObject(posX, posY - 1); // Get the object on top
+                    objectOnTop = map.getObject(posX, posY - 1); // Get the object on top
                 }
                 switch (objectOnTop) // Switches depending on the object on top of alien
                 {
+                case '1':
+                    if (Zombie.Defeated[0] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 1;
+                        break;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                        break;
+                    }
+                
+                case '2':
+                    if (Zombie.Defeated[1] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 2;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+
+                case '3':
+                    if (Zombie.Defeated[2] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 3;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '4':
+                    if (Zombie.Defeated[3] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 4;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+
+                case '5':
+                    if (Zombie.Defeated[4] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 5;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '6':
+                    if (Zombie.Defeated[5] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 6;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+
+                case '7':
+                    if (Zombie.Defeated[6] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 7;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+
+                case '8':
+                    if (Zombie.Defeated[7] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 8;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '9':
+                    if (Zombie.Defeated[8] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 9;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            upPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveUp();
+                        pf::Pause();
+                        inp = "up";
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
+                    }
+                    break;
+
                 case 'r':                               // Special Case: Rock will stop the alien and change into a random object
-                    map.rockItem(map_, posX, posY - 1); // Randomises item on the rock
+                    map.rockItem(map, posX, posY - 1); // Randomises item on the rock
                     prevObj = 'r';                      // Sets prev object to r so that the arrows won't glitch out
                     hitObject = true;                   // This will make the movement code loop with the same direction unless it is true, which in this case, stops.
                     pf::ClearScreen();                  // Duh
-                    map_.display();                     // Duh
+                    map.display();                     // Duh
                     map.CombatHUD();                    // Duh
                     map.rockEffect();                   // Rock item will reveal and print out which item discover
                     pf::Pause();                        // Duh
@@ -376,14 +644,14 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                         podEffect();             // It will deal damage to the nearest zombie
                         if (hitBarrier == false) // This is a redundant code to check if hitbarrier is false, but just to be safe
                         {
-                            upPos(map_); // Moves the alien upwards
+                            upPos(map); // Moves the alien upwards
                         }
                         prevObj = 'p';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        podEffect();
+                        podMessage();
                         pf::Pause();
                         inp = "up"; // Just to ensure the alien will still go up
                         break;
@@ -399,19 +667,42 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         prevObj = 'h';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        healthEffect(AlienHp, MaxAlienHp);
+                        healthEffect();
                         pf::Pause();
                         inp = "up";
                         break;
                     }
 
+                case '.':
+                    if (prevObj == 'r') 
+                    {                   
+                        prevObj = 'q';  
+                        break;         
+                    }
+                    else
+                    {            
+                        if (hitBarrier == false) 
+                        {
+                            upPos(map); 
+                        }
+                        prevObj = '.';
+                        hitObject = false;
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        dotEffect();
+                        pf::Pause();
+                        inp = "up"; 
+                        break;
+                    }
+                        
                 case ' ':
                     if (prevObj == 'r')
                     {
@@ -422,12 +713,12 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         prevObj = ' ';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         std::cout << "\n\nAlien sees no obstacle in front of it and walks gracefully towards it.\n"
                                   << std::endl;
@@ -446,16 +737,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveUp();
                         pf::Pause();
                         inp = "up";
-                        AlienMove(map_, "up", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien, "up", map.rows, map.columns);
                         break;
                     }
 
@@ -469,16 +760,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveDown();
                         pf::Pause();
                         inp = "down";
-                        AlienMove(map_, "down", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
                         break;
                     }
 
@@ -492,16 +783,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveLeft();
                         pf::Pause();
                         inp = "left";
-                        AlienMove(map_, "left", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
                         break;
                     }
 
@@ -515,16 +806,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            upPos(map_);
+                            upPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveRight();
                         pf::Pause();
                         inp = "right";
-                        AlienMove(map_, "right", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
                         break;
                     }
 
@@ -532,13 +823,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        } while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false && hitZombie == false);
     }
     if (inp == "down")
     {
         do
         {
-            if (posY == map_.columns)
+            if (posY == map.columns)
             {
                 prevObj = 'q';
                 hitBarrier = true;
@@ -549,16 +840,223 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 char objectOnTop;
                 if (posY != y)
                 {
-                    objectOnTop = map_.getObject(posX, posY + 1);
+                    objectOnTop = map.getObject(posX, posY + 1);
                 }
                 switch (objectOnTop)
                 {
+                case '1':
+                    if (Zombie.Defeated[0] = false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 1;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '2':
+                    if (Zombie.Defeated[1] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 2;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+
+                case '3':
+                    if (Zombie.Defeated[2] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 3;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '4':
+                    if (Zombie.Defeated[3] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 4;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+
+                case '5':
+                    if (Zombie.Defeated[4] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 5;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '6':
+                    if (Zombie.Defeated[5] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 6;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+
+                case '7':
+                    if (Zombie.Defeated[6] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 7;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+
+                case '8':
+                    if (Zombie.Defeated[7] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 8;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '9':
+                    if (Zombie.Defeated[8] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 9;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            downPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveDown();
+                        pf::Pause();
+                        inp = "down";
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
+                    }
+                    break;
+
                 case 'r':
                     hitObject = true;
                     prevObj = 'r';
-                    map.rockItem(map_, posX, posY + 1);
+                    map.rockItem(map, posX, posY + 1);
                     pf::ClearScreen();
-                    map_.display();
+                    map.display();
                     map.CombatHUD();
                     map.rockEffect();
                     pf::Pause();
@@ -574,14 +1072,15 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         prevObj = 'p';
+                        podEffect();
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        podEffect();
+                        podMessage();
                         pf::Pause();
                         inp = "down";
                         break;
@@ -597,19 +1096,42 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false) // add if statements for prevobj = r later
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         prevObj = 'h';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        healthEffect(AlienHp, MaxAlienHp);
+                        healthEffect();
                         pf::Pause();
                         inp = "down";
                         break;
                     }
 
+                case '.':
+                    if (prevObj == 'r') 
+                    {                   
+                        prevObj = 'q';  
+                        break;         
+                    }
+                    else
+                    {            
+                        if (hitBarrier == false) 
+                        {
+                            downPos(map); 
+                        }
+                        prevObj = '.';
+                        hitObject = false;
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        dotEffect();
+                        pf::Pause();
+                        inp = "down"; 
+                        break;
+                    }
+                        
                 case ' ':
                     if (prevObj == 'r')
                     {
@@ -620,12 +1142,12 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         prevObj = ' ';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         std::cout << "\n\nAlien sees no obstacle in front of it and walks gracefully towards it.\n"
                                   << std::endl;
@@ -644,16 +1166,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveUp();
                         pf::Pause();
                         inp = "up";
-                        AlienMove(map_, "up", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
                         break;
                     }
 
@@ -667,16 +1189,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveDown();
                         pf::Pause();
                         inp = "down";
-                        AlienMove(map_, "down", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
                         break;
                     }
 
@@ -690,16 +1212,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveLeft();
                         pf::Pause();
                         inp = "left";
-                        AlienMove(map_, "left", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
                         break;
                     }
 
@@ -713,15 +1235,15 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            downPos(map_);
+                            downPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveRight();
                         pf::Pause();
-                        AlienMove(map_, "right", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
                         break;
                     }
 
@@ -729,7 +1251,7 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        } while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false && hitZombie == false);
     }
     if (inp == "left")
     {
@@ -737,7 +1259,6 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
         {
             if (posX == 1)
             {
-                std::cout << "hA" << std::endl;
                 prevObj = 'q';
                 hitBarrier = true;
                 break;
@@ -748,16 +1269,223 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 char objectOnTop;
                 if (posX != 0)
                 {
-                    objectOnTop = map_.getObject(posX - 1, posY);
+                    objectOnTop = map.getObject(posX - 1, posY);
                 }
                 switch (objectOnTop)
                 {
+                case '1':
+                    if (Zombie.Defeated[0] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 1;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '2':
+                    if (Zombie.Defeated[1] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 2;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+
+                case '3':
+                    if (Zombie.Defeated[2] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 3;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '4':
+                    if (Zombie.Defeated[3] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 4;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+
+                case '5':
+                    if (Zombie.Defeated[4] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 5;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '6':
+                    if (Zombie.Defeated[5] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 6;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+
+                case '7':
+                    if (Zombie.Defeated[6] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 7;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+
+                case '8':
+                    if (Zombie.Defeated[7] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 8;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '9':
+                    if (Zombie.Defeated[8] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 9;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            leftPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveLeft();
+                        pf::Pause();
+                        inp = "left";
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
+                    }
+                    break;
+
                 case 'r':
                     hitObject = true;
                     prevObj = 'r';
-                    map.rockItem(map_, posX - 1, posY);
+                    map.rockItem(map, posX - 1, posY);
                     pf::ClearScreen();
-                    map_.display();
+                    map.display();
                     map.CombatHUD();
                     map.rockEffect();
                     pf::Pause();
@@ -773,14 +1501,15 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         hitObject = false;
+                        podEffect();
                         prevObj = 'p';
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        podEffect();
+                        podMessage();
                         pf::Pause();
                         inp = "left";
                         break;
@@ -796,19 +1525,42 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         prevObj = 'h';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        healthEffect(AlienHp, MaxAlienHp);
+                        healthEffect();
                         pf::Pause();
                         inp = "left";
                         break;
                     }
 
+                case '.':
+                    if (prevObj == 'r') 
+                    {                   
+                        prevObj = 'q';  
+                        break;         
+                    }
+                    else
+                    {            
+                        if (hitBarrier == false) 
+                        {
+                            leftPos(map); 
+                        }
+                        prevObj = '.';
+                        hitObject = false;
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        dotEffect();
+                        pf::Pause();
+                        inp = "left"; 
+                        break;
+                    }
+                        
                 case ' ':
                     if (prevObj == 'r')
                     {
@@ -819,12 +1571,12 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         prevObj = ' ';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         std::cout << "\n\nAlien sees no obstacle in front of it and walks gracefully towards it.\n"
                                   << std::endl;
@@ -843,16 +1595,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveUp();
                         pf::Pause();
                         inp = "up";
-                        AlienMove(map_, "up", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
                         break;
                     }
 
@@ -866,16 +1618,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveDown();
                         pf::Pause();
                         inp = "down";
-                        AlienMove(map_, "down", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
                         break;
                     }
 
@@ -889,16 +1641,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveLeft();
                         pf::Pause();
                         inp = "left";
-                        AlienMove(map_, "left", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
                         break;
                     }
 
@@ -912,16 +1664,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            leftPos(map_);
+                            leftPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveRight();
                         pf::Pause();
                         inp = "right";
-                        AlienMove(map_, "right", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
                         break;
                     }
 
@@ -929,13 +1681,13 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        } while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false && hitZombie == false);
     }
     if (inp == "right")
     {
         do
         {
-            if (posX == map_.rows)
+            if (posX == map.rows)
             {
                 prevObj = 'q';
                 hitBarrier = true;
@@ -947,17 +1699,223 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                 char objectOnTop;
                 if (posX != x)
                 {
-                    objectOnTop = map_.getObject(posX + 1, posY);
+                    objectOnTop = map.getObject(posX + 1, posY);
                 }
                 switch (objectOnTop)
                 {
+                case '1':
+                    if (Zombie.Defeated[0] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 1;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '2':
+                    if (Zombie.Defeated[1] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 2;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+
+                case '3':
+                    if (Zombie.Defeated[2] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 3;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '4':
+                    if (Zombie.Defeated[3] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 4;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+
+                case '5':
+                    if (Zombie.Defeated[4] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 5;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '6':
+                    if (Zombie.Defeated[5] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 6;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+
+                case '7':
+                    if (Zombie.Defeated[6] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 7;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+
+                case '8':
+                    if (Zombie.Defeated[7] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 8;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;
+                
+                case '9':
+                    if (Zombie.Defeated[8] == false)
+                    {
+                        hitZombie = true;
+                        AlienZomb = 9;
+                    }
+                    else
+                    {
+                        hitZombie = false;
+                        if (hitBarrier == false)
+                        {
+                            rightPos(map);
+                        }
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        PrintAlienMoveRight();
+                        pf::Pause();
+                        inp = "right";
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
+                    }
+                    break;                  
 
                 case 'r':
                     hitObject = true;
                     prevObj = 'r';
-                    map.rockItem(map_, posX + 1, posY);
+                    map.rockItem(map, posX + 1, posY);
                     pf::ClearScreen();
-                    map_.display();
+                    map.display();
                     map.CombatHUD();
                     map.rockEffect();
                     pf::Pause();
@@ -973,14 +1931,15 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         prevObj = 'p';
+                        podEffect();
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        podEffect();
+                        podMessage();
                         pf::Pause();
                         inp = "right";
                         break;
@@ -996,19 +1955,42 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         prevObj = 'h';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
-                        healthEffect(AlienHp, MaxAlienHp);
+                        healthEffect();
                         pf::Pause();
                         inp = "right";
                         break;
                     }
 
+                case '.':
+                    if (prevObj == 'r') 
+                    {                   
+                        prevObj = 'q';  
+                        break;         
+                    }
+                    else
+                    {            
+                        if (hitBarrier == false) 
+                        {
+                            rightPos(map); 
+                        }
+                        prevObj = '.';
+                        hitObject = false;
+                        pf::ClearScreen();
+                        map.display();
+                        map.CombatHUD();
+                        dotEffect();
+                        pf::Pause();
+                        inp = "right"; 
+                        break;
+                    }
+                        
                 case ' ':
                     if (prevObj == 'r')
                     {
@@ -1019,12 +2001,12 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         prevObj = ' ';
                         hitObject = false;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         std::cout << "\n\nAlien sees no obstacle in front of it and walks gracefully towards it.\n"
                                   << std::endl;
@@ -1043,16 +2025,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveUp();
                         pf::Pause();
                         inp = "up";
-                        AlienMove(map_, "up", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
                         break;
                     }
 
@@ -1066,16 +2048,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveDown();
                         pf::Pause();
                         inp = "down";
-                        AlienMove(map_, "down", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"down", map.rows, map.columns);
                         break;
                     }
 
@@ -1089,16 +2071,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveLeft();
                         pf::Pause();
                         inp = "left";
-                        AlienMove(map_, "left", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"left", map.rows, map.columns);
                         break;
                     }
 
@@ -1112,16 +2094,16 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     {
                         if (hitBarrier == false)
                         {
-                            rightPos(map_);
+                            rightPos(map);
                         }
                         hitObject = true;
                         pf::ClearScreen();
-                        map_.display();
+                        map.display();
                         map.CombatHUD();
                         PrintAlienMoveRight();
                         pf::Pause();
                         inp = "right";
-                        AlienMove(map_, "right", map_.rows, map_.columns);
+                        AlienMove(map, Zombie, Alien,"right", map.rows, map.columns);
                         break;
                     }
 
@@ -1129,12 +2111,28 @@ void Player::AlienMove(Map &map_, std::string inp, int x, int y)
                     break;
                 }
             }
-        } while (hitBarrier == false && hitObject == false);
+        } while (hitBarrier == false && hitObject == false && hitZombie == false);
     }
 }
 
 void Player::AlienPlacement(Map &map_)
 {
+}
+
+void Enemy::ZombieCreation()
+{
+    for (int i = 0; i < ZombieCount; i++)
+    {
+        int randomHp = rand() % 2 + 1;
+        int randomAtk = rand() % 2 + 1;
+        int randomRng = rand() % 5 + 1;
+        int ZombieHp = 50 + (randomHp * 50);
+        int ZombieAtk = 5 + (randomAtk * 5);
+        int ZombieRange = randomRng;
+        ZombHpVec.push_back(ZombieHp);
+        ZombAtkVec.push_back(ZombieAtk);
+        ZombRngVec.push_back(ZombieRange);
+    }
 }
 
 void Enemy::upPos(Map &map_, int x)
@@ -1197,498 +2195,702 @@ void PrintZombMoveRight(int i)
     std::cout << "\n\nZombie " << i + 1 << " moves right.\n\n";
 }
 
+void Enemy::ZombieAttack(int zombieNum, Player &Alien, Map &map_)
+{
+    Map map;
+    Enemy Zombie;
+    if (Defeated[zombieNum] == true)
+    {
+
+    }
+    else if (ZombDist[zombieNum] <= ZombRngVec[zombieNum])
+    {
+        Alien.AlienHpVec[0] = Alien.AlienHpVec[0] - ZombAtkVec[zombieNum];
+        std::cout << "\n\nZombie " << zombieNum + 1 << " has dealt " << ZombAtkVec[zombieNum] << " damage to the Alien!\n" << std::endl;
+        pf::Pause();
+        if (Alien.AlienHpVec[0] <= 0)
+        {
+            Alien.AlienHpVec[0] = 0;
+            pf::ClearScreen();
+            map_.display();
+            map.CombatHUD();
+            std::cout << "\n\nZombie wins!" << std::endl;
+            gameover(Alien, Zombie);
+        }
+    }
+    else
+    {
+        std::cout << "\n\nZombie " << zombieNum + 1 << " is unable to attack." << std::endl;
+        std::cout << "Alien is too far away\n" << std::endl;
+        pf::Pause();
+    }
+}
+
 void Enemy::ZombieMove(Map &map_, int x, int y)
 {
     Map map;
     int randDir;
+    
     randDir = rand() % 4;
     // 0 = up, 1 = down, 2 = left, 3 = right
-    if (randDir == 0)
+    if (Defeated[n] == true)
     {
-        do
-        {
-            if (ZombPosY[n] == 1)
-            {
-                hitBorder = true;
-                ZombieMove(map_, x, y);
-            }
-            else
-            {
-                hitBorder = false;
-                char nxtObj;
-                if (ZombPosY[n] != 0)
-                {
-                    nxtObj = map_.getObject(ZombPosX[n], ZombPosY[n] - 1);
-                }
-                switch (nxtObj)
-                {
-                case 'A':
-                    hitAlien = true;
-                    randDir = rand() % 4;
-                    break;
-
-                case 'r':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case 'p':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case 'h':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case ' ':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case '^':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case 'V':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case '<':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                case '>':
-                    count = count + n;
-                    upPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveUp(n);
-                    pf::Pause();
-                    break;
-
-                default:
-                    break;
-                }
-            }
-        } while (hitBorder == false && hitAlien == false && hitObject == false);
+        n++;
+        ZombieMove(map_, x, y);
     }
-    if (randDir == 1)
+    else
     {
-        do
+        if (randDir == 0)
         {
-            if (ZombPosY[n] == y)
+            do
             {
-                hitBorder = true;
-                ZombieMove(map_, x, y);
-            }
-            else
-            {
-                hitBorder = false;
-                char nxtObj;
-                if (ZombPosY[n] != 0)
+                if (ZombPosY[n] == 1)
                 {
-                    nxtObj = map_.getObject(ZombPosX[n], ZombPosY[n] + 1);
+                    hitBorder = true;
+                    ZombieMove(map_, x, y);
                 }
-                switch (nxtObj)
+                else
                 {
-                case 'A':
-                    hitAlien = true;
-                    randDir = rand() % 4;
-                    break;
+                    hitBorder = false;
+                    char nxtObj;
+                    if (ZombPosY[n] != 0)
+                    {
+                        nxtObj = map_.getObject(ZombPosX[n], ZombPosY[n] - 1);
+                    }
+                    switch (nxtObj)
+                    {
+                    case '1':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '2':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'r':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case '3':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '4':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'p':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case '5':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '6':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'h':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case '7':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case ' ':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case '8':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '9':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case '^':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case 'A':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'V':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case 'r':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
 
-                case '<':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case 'p':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
 
-                case '>':
-                    count = count + n;
-                    downPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveDown(n);
-                    pf::Pause();
-                    break;
+                    case 'h':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
 
-                default:
-                    break;
+                    case ' ':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
+
+                    case '^':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
+
+                    case 'v':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
+
+                    case '<':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
+
+                    case '>':
+                        count = count + n;
+                        upPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveUp(n);
+                        pf::Pause();
+                        break;
+
+                    default:
+                        break;
+                    }
                 }
-            }
-        } while (hitBorder == false && hitAlien == false && hitObject == false);
-    }
-    if (randDir == 2)
-    {
-        do
+            } while (hitBorder == false && hitAlien == false && hitObject == false);
+        }
+        if (randDir == 1)
         {
-            if (ZombPosX[n] == 1)
+            do
             {
-                hitBorder = true;
-                ZombieMove(map_, x, y);
-            }
-            else
-            {
-                hitBorder = false;
-                char nxtObj;
-                if (ZombPosY[n] != 0)
+                if (ZombPosY[n] == y)
                 {
-                    nxtObj = map_.getObject(ZombPosX[n] - 1, ZombPosY[n]);
+                    hitBorder = true;
+                    ZombieMove(map_, x, y);
                 }
-                switch (nxtObj)
+                else
                 {
-                case 'A':
-                    hitAlien = true;
-                    randDir = rand() % 4;
-                    break;
+                    hitBorder = false;
+                    char nxtObj;
+                    if (ZombPosY[n] != 0)
+                    {
+                        nxtObj = map_.getObject(ZombPosX[n], ZombPosY[n] + 1);
+                    }
+                    switch (nxtObj)
+                    {
+                    case '1':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '2':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'r':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case '3':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '4':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'p':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case '5':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '6':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'h':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case '7':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case ' ':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case '8':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '9':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case 'A':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case '^':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case 'r':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
 
-                case 'V':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case 'p':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
 
-                case '<':  
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case 'h':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
 
-                case '>':
-                    count = count + n;
-                    leftPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveLeft(n);
-                    pf::Pause();
-                    break;
+                    case ' ':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
 
-                default:
-                    break;
+                    case '^':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
+
+                    case 'v':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
+
+                    case '<':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
+
+                    case '>':
+                        count = count + n;
+                        downPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveDown(n);
+                        pf::Pause();
+                        break;
+
+                    default:
+                        break;
+                    }
                 }
-            }
-        } while (hitBorder == false && hitAlien == false && hitObject == false);
-    }
-    if (randDir == 3)
-    {
-        do
+            } while (hitBorder == false && hitAlien == false && hitObject == false);
+        }
+        if (randDir == 2)
         {
-            if (ZombPosX[n] == x)
+            do
             {
-                hitBorder = true;
-                ZombieMove(map_, x, y);
-            }
-            else
+                if (ZombPosX[n] == 1)
+                {
+                    hitBorder = true;
+                    ZombieMove(map_, x, y);
+                }
+                else
+                {
+                    hitBorder = false;
+                    char nxtObj;
+                    if (ZombPosY[n] != 0)
+                    {
+                        nxtObj = map_.getObject(ZombPosX[n] - 1, ZombPosY[n]);
+                    }
+                    switch (nxtObj)
+                    {
+                    case '1':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '2':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+
+                    case '3':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '4':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+
+                    case '5':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '6':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+
+                    case '7':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+
+                    case '8':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '9':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case 'A':
+                        hitAlien = true;
+                        randDir = rand() % 4;
+                        break;
+
+                    case 'r':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case 'p':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case 'h':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case ' ':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case '^':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case 'v':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case '<':  
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    case '>':
+                        count = count + n;
+                        leftPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveLeft(n);
+                        pf::Pause();
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+            } while (hitBorder == false && hitAlien == false && hitObject == false);
+        }
+        if (randDir == 3)
+        {
+            do
             {
-                hitBorder = false;
-                char nxtObj;
-                if (ZombPosY[n] != 0)
+                if (ZombPosX[n] == x)
                 {
-                    nxtObj = map_.getObject(ZombPosX[n] + 1, ZombPosY[n]);
+                    hitBorder = true;
+                    ZombieMove(map_, x, y);
                 }
-                switch (nxtObj)
+                else
                 {
-                case 'A':
-                    hitAlien = true;
-                    randDir = rand() % 4;
-                    break;
+                    hitBorder = false;
+                    char nxtObj;
+                    if (ZombPosY[n] != 0)
+                    {
+                        nxtObj = map_.getObject(ZombPosX[n] + 1, ZombPosY[n]);
+                    }
+                    switch (nxtObj)
+                    {
+                    case '1':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '2':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'r':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case '3':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '4':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'p':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case '5':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '6':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'h':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case '7':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case ' ':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case '8':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
+                    
+                    case '9':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case '^':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case 'A':
+                        hitAlien = true;
+                        ZombieMove(map_, x, y);
+                        break;
 
-                case 'V':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case 'r':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
 
-                case '<':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case 'p':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
 
-                case '>':
-                    count = count + n;
-                    rightPos(map_, count);
-                    hitObject = true;
-                    pf::ClearScreen();
-                    map_.display();
-                    map.CombatHUD();
-                    PrintZombMoveRight(n);
-                    pf::Pause();
-                    break;
+                    case 'h':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
 
-                default:
-                    break;
+                    case ' ':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
+
+                    case '^':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
+
+                    case 'v':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
+
+                    case '<':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
+
+                    case '>':
+                        count = count + n;
+                        rightPos(map_, count);
+                        hitObject = true;
+                        pf::ClearScreen();
+                        map_.display();
+                        map.CombatHUD();
+                        PrintZombMoveRight(n);
+                        pf::Pause();
+                        break;
+
+                    default:
+                        break;
+                    }
                 }
-            }
-        } while (hitBorder == false && hitAlien == false && hitObject == false);
-    }
-}
-
-void Enemy::ZombieCreation()
-{
-    for (int i = 0; i < ZombieCount; i++)
-    {
-        int randomHp = rand() % 2 + 1;
-        int randomAtk = rand() % 2 + 1;
-        int randomRng = rand() % 5 + 1;
-        int ZombieHp = 100 + (randomHp * 50);
-        int ZombieAtk = 5 + (randomAtk * 5);
-        int ZombieRange = randomRng;
-        ZombHpVec.push_back(ZombieHp);
-        ZombAtkVec.push_back(ZombieAtk);
-        ZombRngVec.push_back(ZombieRange);
+            } while (hitBorder == false && hitAlien == false && hitObject == false);
+        }
     }
 }
