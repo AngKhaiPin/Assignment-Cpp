@@ -19,6 +19,16 @@ namespace pf
     int Pause();
 }
 
+class Encdec {
+    int key = 3;
+ 
+    char c;
+ 
+public:
+    void encrypt();
+    void decrypt();
+};
+
 class Map
 {
     int rows_, columns_;
@@ -36,6 +46,7 @@ public:
     void setObject(int x, int y, char ch);
     void setZomPos(int x, int y, int z);
     void CombatHUD();
+    std::string filenameN;
 };
 
 class Enemy;
@@ -56,10 +67,11 @@ class Player
         int prevY;
         int posX;
         int posY;
-        int AlienAtk = 500;
+        int AlienAtk = 0;
         int AlienHp;
         std::vector<int> AlienHpVec;
         std::vector<int> AlienMaxHpVec;
+        std::string direction;
         void AlienCreation(int ZombCount);
         void InitialLanding(Map &map_, float x, float y);
         void AlienMove(Map &map_, Enemy &Zombie, Player &Alien, std::string inp, int x, int y);
@@ -72,7 +84,7 @@ class Player
         void PrintAlienMoveDown();
         void PrintAlienMoveLeft();
         void PrintAlienMoveRight();
-        void AlienAttack(int zombieNum, Enemy &Zombie);
+        void AlienAttack(int zombieNum, Enemy &Zombie, std::string userInput, Map &map, Player &Alien);
         void healthEffect();
 };
 
@@ -89,7 +101,7 @@ public:
     int randomHp = rand() % 2 + 1;
     int randomAtk = rand() % 2 + 1;
     int randomRng = rand() % 5 + 1;
-    int ZombieCount = 1;
+    int ZombieCount;
     int ZombieHp = 50 + (randomHp * 50);
     int ZombieAtk = 5 + (randomAtk * 5);
     int ZombieRange = randomRng;

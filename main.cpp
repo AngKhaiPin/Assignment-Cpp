@@ -12,10 +12,12 @@
 #include <algorithm>
 #include <fstream>
 #include <numeric>
+#include <filesystem>
+
 
 char GSchoice;
 bool GameOver = false;
-int Rows = 9, Columns = 9;
+int Rows, Columns;
 
 void Combat();
 int main();
@@ -25,6 +27,8 @@ std::vector<std::vector<char>> board; // Make the board a sort of matrix
 Player Alien;
 Enemy Zombie;
 Map map;
+Encdec encdec;
+
 
 template <typename T> // Overloading Operator "<<" to let std::cout print out vector. (MUST NOT TOUCH)
 std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
@@ -34,6 +38,80 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
         os << v[i];
     }
     return os;
+}
+
+void Encdec::encrypt()
+{
+    std::fstream fin, fout;
+ 
+    fin.open(map.filenameN, std::fstream::in);
+    fout.open(map.filenameN + ".txt", std::fstream::out);
+ 
+    while (fin >> std::noskipws >> c) {
+        int temp = (c + key);
+        fout << (char)temp;
+    }
+ 
+    fin.close();
+    fout.close();
+    std::filesystem::remove(map.filenameN);
+}
+ 
+// Definition of decryption function
+void Encdec::decrypt()
+{
+    std::fstream fin;
+    std::fstream fout;
+    fin.open(map.filenameN + ".txt", std::fstream::in);
+    fout.open(map.filenameN, std::fstream::out);
+ 
+    while (fin >> std::noskipws >> c) {
+ 
+        int temp = (c - key);
+        fout << (char)temp;
+    }
+ 
+    fin.close();
+    fout.close();
+}
+
+void difficultyChooser()
+{
+    char diffinput;
+    std::cout << "\nChoose Your Desired Difficulty [E -> Easy | N -> Normal | H -> Hard] => ";
+    std::cin >> diffinput;
+    if (diffinput == 'e' || diffinput == 'E')
+    {
+        std::cout << "\nYou chose Easy mode, you may change the amount of rows and columns according to your liking.\n" << std::endl;
+        pf::Pause();
+        Rows = 15;
+        Columns = 15;
+        Zombie.ZombieCount = 1;
+    }
+    else if (diffinput == 'n' || diffinput == 'N')
+    {
+        std::cout << "\nYou chose Normal mode, you may change the amount of rows and columns according to your liking.\n" << std::endl;
+        pf::Pause();
+        Rows = 9;
+        Columns = 9;
+        Zombie.ZombieCount = 2;
+    }
+    else if (diffinput == 'h' || diffinput == 'H')
+    {
+        std::cout << "\nYou chose Hard mode, you may change the amount of rows and columns according to your liking.\n" << std::endl;
+        pf::Pause();
+        Rows = 5;
+        Columns = 5;
+        Zombie.ZombieCount = 2;
+    }
+    else
+    {
+        std::cout << "\nInvalid Input.\n" << std::endl;
+        pf::Pause();
+        pf::ClearScreen();
+        difficultyChooser();
+    }
+    
 }
 
 void Pause()
@@ -62,6 +140,13 @@ void ChangeZombieSettings()
         ClearScreen();
         ChangeZombieSettings();
     }
+    else if (Zombie.ZombieCount <= 0)
+    {
+        std::cout << "Really bro? You wanna win without even trying your best? GGWP bro" << std::endl;
+        std::cout << "Here, let me let you win, by closing the game. Thanks for playing!\n\n";
+        pf::Pause();
+        exit(0);
+    }
     else
     {
         std::cout << "\nSettings Updated.\n";
@@ -77,7 +162,29 @@ void ChangeGameSettings()
     std::cin >> Columns;
     std::cout << "Enter Columns : ";
     std::cin >> Rows;
-    if (Rows % 2 == 0 || Columns % 2 == 0)
+    if (Rows <= 0 || Columns <= 0)
+    {
+        std::cout << "\nDid you... did you just tried to cheat the system by doing a whoopsies?\n";
+        std::cout << "Please no. no. no. no. no. no. You can't do that.\n";
+        Sleep(500);
+        std::cout << "We can't have that here, it's dangerous!\n";
+        Sleep(1000);
+        std::cout << "\nThere is a reason why my love partner times me is equal to 0,\n";
+        Sleep(1000);
+        std::cout << "Because: ";
+        Sleep(500);
+        std::cout << "They. ";
+        Sleep(500);
+        std::cout << "Dont. ";
+        Sleep(500);
+        std::cout << "Exist.\n\n";
+        Sleep(350);
+        std::cout << "-Lester Liew, 19/2/2023\n\n\n";
+        pf::Pause();
+        pf::ClearScreen();
+        ChangeGameSettings();
+    }
+    else if (Rows % 2 == 0 || Columns % 2 == 0)
     {
         std::cout << "Please ensure that Rows and Columns are odd numbers.\n";
         Sleep(4000);
@@ -128,10 +235,6 @@ void Map::CombatHUD()
 {
     Alien.AlienCreation(Zombie.ZombieCount);
     Zombie.ZombieCreation();
-    for (size_t i = 0; i < Zombie.Defeated.size(); i++)
-    {
-        std::cout << i << ": " << Zombie.Defeated[i];
-    }
     if (Alien.alienTurn == true)
     {
         std::cout << "\n\n->Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
@@ -146,7 +249,7 @@ void Map::CombatHUD()
         switch (Zombie.n)
         {
         case 0:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             std::cout << '\n'
                       << "->Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
             for (int i = 1; i < Zombie.ZombieCount; i++)
@@ -157,7 +260,7 @@ void Map::CombatHUD()
             break;
 
         case 1:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             std::cout << '\n'
                       << "  Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
             std::cout << '\n'
@@ -170,7 +273,7 @@ void Map::CombatHUD()
             break;
 
         case 2:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             std::cout << '\n'
                       << "  Zombie " << 1 << " : Health " << Zombie.ZombHpVec[0] << ", Attack  " << Zombie.ZombAtkVec[0] << ", Range " << Zombie.ZombRngVec[0];
             std::cout << '\n'
@@ -185,7 +288,7 @@ void Map::CombatHUD()
             break;
 
         case 3:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 3; i++)
             {
                 std::cout << '\n'
@@ -201,7 +304,7 @@ void Map::CombatHUD()
             break;
 
         case 4:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 4; i++)
             {
                 std::cout << '\n'
@@ -217,7 +320,7 @@ void Map::CombatHUD()
             break;
 
         case 5:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 5; i++)
             {
                 std::cout << '\n'
@@ -233,7 +336,7 @@ void Map::CombatHUD()
             break;
 
         case 6:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 6; i++)
             {
                 std::cout << '\n'
@@ -249,7 +352,7 @@ void Map::CombatHUD()
             break;
 
         case 7:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 7; i++)
             {
                 std::cout << '\n'
@@ -265,7 +368,7 @@ void Map::CombatHUD()
             break;
 
         case 8:
-            std::cout << "\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
+            std::cout << "\n\n  Alien    : Health " << Alien.AlienHpVec[0] << ", Attack  " << Alien.AlienAtk;
             for (int i = 0; i < 8; i++)
             {
                 std::cout << '\n'
@@ -380,13 +483,15 @@ void QuitCommand()
     std::cin >> ans;
     if (ans == 'y' || ans == 'Y')
     {
-        std::cout << "\n\nGoodbye!" << std::endl;
+        std::cout << "\nGoodbye. Have a nice day!" << std::endl;
         pf::Pause();
         pf::ClearScreen();
         exit(0);
     }
     else
     {
+        pf::ClearScreen();
+        map.display();
         Combat();
     }
 }
@@ -395,13 +500,22 @@ bool repeatLoad;
 
 void loadGame(std::string fileName, Map &map, Player &alien, Enemy &zombie) // Add file name here to customise it
 {
+    int pX, pY, HpVec, AtkVec, RngVec, Def;
     std::ifstream inFile(fileName);
     inFile >> map.rows >> map.columns;
     inFile >> alien.posX >> alien.posY;
-    inFile >> zombie.ZombieCount;
+    inFile >> zombie.ZombieCount >> pX >> pY >> HpVec >> AtkVec >> RngVec >> Def;
+    zombie.ZombPosX.resize(pX);
+    zombie.ZombPosY.resize(pY);
+    zombie.ZombHpVec.resize(HpVec);
+    zombie.ZombAtkVec.resize(AtkVec);
+    zombie.ZombRngVec.resize(RngVec);
+    zombie.Defeated.resize(Def);
     for (int i = 0; i < zombie.ZombieCount; i++)
     {
-        inFile >> zombie.ZombPosX[i] >> zombie.ZombPosY[i] >> zombie.ZombHpVec[i] >> zombie.ZombAtkVec[i] >> zombie.ZombRngVec[i];
+        int x;
+        inFile >> zombie.ZombPosX[i] >> zombie.ZombPosY[i] >> zombie.ZombHpVec[i] >> zombie.ZombAtkVec[i] >> zombie.ZombRngVec[i] >> x;
+        zombie.Defeated[i] = x;
     }
     inFile >> alien.AlienHpVec[0] >> alien.AlienAtk;
     map.init(map.rows, map.columns);
@@ -413,6 +527,7 @@ void loadGame(std::string fileName, Map &map, Player &alien, Enemy &zombie) // A
         }
     }
     inFile.close();
+    std::filesystem::remove(map.filenameN);
     std::cout << "Game loaded successfully. \n\nThere might be certain areas in which the data is wrong, \nPlease write load again until the data is consistent\n"
               << std::endl;
     pf::Pause();
@@ -426,11 +541,12 @@ void saveGame(std::string fileName, Map &map, Player &alien, Enemy &zombie)
     std::ofstream outFile(fileName);
     outFile << map.rows << " " << map.columns << std::endl;
     outFile << alien.posX << " " << alien.posY << std::endl;
-    outFile << zombie.ZombieCount << std::endl;
+    outFile << zombie.ZombieCount << " " << zombie.ZombPosX.size() << " " << zombie.ZombPosY.size() << " "<< zombie.ZombHpVec.size() 
+            << " " << zombie.ZombAtkVec.size() << " " << zombie.ZombRngVec.size() << " " << zombie.Defeated.size() << std::endl;
     for (int i = 0; i < zombie.ZombieCount; i++)
     {
         outFile << zombie.ZombPosX[i] << " " << zombie.ZombPosY[i] << " " << zombie.ZombHpVec[i]
-                << " " << zombie.ZombAtkVec[i] << " " << zombie.ZombRngVec[i] << std::endl;
+                << " " << zombie.ZombAtkVec[i] << " " << zombie.ZombRngVec[i] << " " << zombie.Defeated[i] << std::endl;
     }
     outFile << alien.AlienHpVec[0] << " " << alien.AlienAtk;
     for (int i = 0; i < map.columns; i++)
@@ -441,6 +557,7 @@ void saveGame(std::string fileName, Map &map, Player &alien, Enemy &zombie)
         }
     }
     outFile.close();
+    encdec.encrypt();
     std::cout << "Game saved successfully." << std::endl;
     pf::Pause();
     pf::ClearScreen();
@@ -473,27 +590,42 @@ void PlayerMovement()
     else if (userInput == "save")
     {
         std::string fileName;
-        std::cout << "Please name your file: ";
+        std::cout << "Please name your file (There is no need for .txt extension at the end): ";
         std::cin >> fileName;
+        map.filenameN = fileName;
         saveGame(fileName, map, Alien, Zombie);
     }
     else if (userInput == "load")
     {
         std::string fileName;
+        map.filenameN = fileName;
         char choice;
         std::cout << "Do you want to save the current game? (y/n)> ";
         std::cin >> choice;
         if (choice == 'y' || choice == 'Y')
         {
-            std::cout << "Please name your file: ";
+            std::cout << "Please name your file (There is no need for .txt extension at the end): ";
             std::cin >> fileName;
             saveGame(fileName, map, Alien, Zombie);
         }
         else if (choice == 'n' || choice == 'N')
         {
-            std::cout << "Please insert the name of your save file: ";
+            std::cout << "Please insert the name of your save file (There is no need for .txt extension at the end): ";
             std::cin >> fileName;
-            loadGame(fileName, map, Alien, Zombie);
+            map.filenameN = fileName;
+            if (std::filesystem::exists(fileName + ".txt"))
+            {
+                encdec.decrypt();
+                loadGame(fileName, map, Alien, Zombie);
+            }
+            else
+            {
+                std::cout << "No such file exists? Are you sure you entered the correct file name?\n";
+                pf::Pause();
+                pf::ClearScreen();
+                map.display();
+                Combat();
+            }
         }
         else
         {
@@ -527,8 +659,7 @@ void PlayerMovement()
                 map.CombatHUD();
                 std::cout << "\n"
                           << "\nAlien attack Zombie " << Alien.AlienZomb << "." << std::endl;
-                Alien.AlienAttack(Alien.AlienZomb, Zombie);
-                pf::Pause();
+                Alien.AlienAttack(Alien.AlienZomb, Zombie, userInput, map, Alien);
             }
         } while (Alien.hitBarrier == false && Alien.hitObject == false && Alien.hitZombie == false);
     }
@@ -586,6 +717,7 @@ void podMessage()
               << std::endl;
     if (Zombie.ZombHpVec[Zombie.nearestZomb - 1] <= 0)
     {
+        map.setObject(Zombie.ZombPosX[Zombie.nearestZomb - 1], Zombie.ZombPosY[Zombie.nearestZomb - 1], ' ');
         std::cout << "Alien has defeated zombie " << Zombie.nearestZomb << "." << std::endl;
         Zombie.ZombHpVec[Zombie.nearestZomb - 1] = 0;
         Zombie.Defeated[Zombie.nearestZomb - 1] = true;
@@ -617,11 +749,12 @@ void gameover(Player &Alien, Enemy &Zombie)
         Zombie.count = 49;
         Zombie.n = 0;
         map.map_.clear();
+        pf::ClearScreen();
         main();
     }
     else if (choice == 'n' || choice == 'N')
     {
-        std::cout << "\nGoodbye!" << std::endl;
+        std::cout << "Goodbye. Have a nice day!" << std::endl;
         pf::Pause();
         pf::ClearScreen();
         exit(0);
@@ -635,7 +768,7 @@ void gameover(Player &Alien, Enemy &Zombie)
 
 void EnemyMovement()
 {
-    Alien.AlienAtk = 500;
+    Alien.AlienAtk = 0;
     Zombie.ZombieMove(map, Rows, Columns);
     pf::ClearScreen();
     map.display();
@@ -710,6 +843,7 @@ int main()
     Zombie.Defeated.clear();
     Alien.alienTurn = true;
     srand(1); // set fixed random value
+    difficultyChooser();
     ShowGameSettings();
     pf::ClearScreen();
     makeBoard();

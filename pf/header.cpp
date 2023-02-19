@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
+#include <vector>
 #include <fstream>
 
 void gameover(Player &Alien, Enemy &Zombie);
@@ -12,8 +13,28 @@ void Map::init(int rows1, int columns1)
     columns_ = columns1;
     rows = rows_;
     columns = columns_;
-    char randobjects[] = {' ', ' ', ' ', ' ', ' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
-    int noOfObjects = 12; // number of objects in the objects array
+    int noOfObjects;
+    std::vector<char> randobjects;
+    if ((rows * columns) <= 9)
+    {
+        randobjects = {' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
+        noOfObjects = 8; // number of objects in the objects array
+    }
+    else if ((rows * columns) <= 36)
+    {
+        randobjects = {' ' ,' ', ' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
+        noOfObjects = 10; // number of objects in the objects array
+    }
+    else if ((rows * columns) <= 81)
+    {
+        randobjects = {' ', ' ', ' ', ' ', ' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
+        noOfObjects = 12; // number of objects in the objects array
+    }
+    else
+    {
+        randobjects = {' ', ' ', ' ',' ', ' ', ' ', ' ', ' ', 'r', 'h', 'v', '^', '<', '>', 'p'};
+        noOfObjects = 15; // number of objects in the objects array
+    }
     // create dynamic 2D array using vector
     map_.resize(columns_); // create empty rows
     for (int i = 0; i < columns_; ++i)
@@ -145,7 +166,7 @@ namespace pf
 
 void Player::AlienCreation(int ZombCount)
 {
-    int AlienAtk = 500;
+    int AlienAtk = 0;
     if (ZombCount <= 2)
     {
         AlienHp = 100;
@@ -344,15 +365,17 @@ void Player::rightPos(Map &map_)
     map_.setObject(posX, posY, 'A');
 }
 
-void Player::AlienAttack(int zombieNum, Enemy &Zombie)
+void Player::AlienAttack(int zombieNum, Enemy &Zombie, std::string userInput, Map &map, Player &Alien)
 {
     Zombie.ZombHpVec[zombieNum - 1] = Zombie.ZombHpVec[zombieNum - 1] - AlienAtk;
     std::cout << "Alien has dealt " << AlienAtk << " damage to Zombie " << zombieNum << "." << std::endl;
     if (Zombie.ZombHpVec[zombieNum - 1] <= 0)
     {
-        std::cout << "Alien has defeated zombie " << zombieNum << ".\n" << std::endl;
+        map.setObject(Zombie.ZombPosX[zombieNum - 1], Zombie.ZombPosY[zombieNum - 1], ' ');
+        std::cout << "Alien has defeated zombie " << zombieNum << ", it will rest for this round due to exhaustion." << std::endl;
         Zombie.ZombHpVec[zombieNum - 1] = 0;
         Zombie.Defeated[zombieNum - 1] = true;
+        hitZombie = false;
     }
     else
     {
@@ -434,6 +457,7 @@ void Player::AlienMove(Map &map, Enemy &Zombie, Player &Alien, std::string inp, 
                         PrintAlienMoveUp();
                         pf::Pause();
                         inp = "up";
+                        direction = "up";
                         AlienMove(map, Zombie, Alien,"up", map.rows, map.columns);
                         break;
                     }
