@@ -33,7 +33,7 @@ List all the features completed.
 20. Implemented functions to save and load game files.
 21. Improved on pod object to check if zombie is defeated or not.
 22. Implemented the part where zombie got defeated by alien.
-23. When zombie got defeated by alien, alien needs to run over the zombie to remove it from board.
+23. When zombie got defeated by alien, zombie will be removed from the board and replaced with a space, but alien will not go over it. 
 
 ### To Do
 
@@ -45,7 +45,7 @@ List all the features not yet done. Remove this section if there is no incomplet
 Describe the additional features that has been implemented.
 
 1. Alien health is change based on number of zombies.
-2. When zombie got defeated, alien needs to run over it to secure the kill.
+2. When zombie got defeated, zombie will be removed from board, however alien stays at its position where it defeat the zombie.
 
 ## Contributions
 
