@@ -13,6 +13,7 @@ Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI).
 ## User Manual
 
 Please provide the user manual on how to use your program.
+![alt text](https://www.linkpicture.com/q/Alien-v.s-Zombie-User-Manual.png)
 
 Please DO NOT change the Progress Log below. Leave it as it is.
 
