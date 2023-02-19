@@ -15,7 +15,7 @@ Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI).
 Please provide the user manual on how to use your program.
 ![alt text](https://www.linkpicture.com/q/Alien-v.s-Zombie-User-Manual.png)
 
-Please DO NOT change the Progress Log below. Leave it as it is.
+
 
 ## Progress Log
 
@@ -24,7 +24,6 @@ Please DO NOT change the Progress Log below. Leave it as it is.
 
 ## Contributors
 
-Please replace the following with your group members' names. 
 
 - Ang Khai Ping
 - Lester Liew Jun Min
