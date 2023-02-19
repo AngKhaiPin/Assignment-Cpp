@@ -2,7 +2,8 @@
 
 Alien vs. Zombie is a turn-based game where player plays as Alien. Player's objective is to defeat all zombies while staying alive. Player can optimize the game settings by changing the game board dimensions as well as the number of zombies. Player can also use in-game objects to aid alien in winning the game.
 
-Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI).
+Part 1 : [Video Demo](https://youtu.be/hvJd5apu8nI). <gr/>
+Part 2 : [Video Demo]
 
 ## Compilation Instructions
 
